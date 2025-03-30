@@ -7,7 +7,7 @@ using FutScore.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FutScore.Application.Services
+namespace FutScore.Application.Services.JwtService
 {
     public class JwtService : IJwtService
     {

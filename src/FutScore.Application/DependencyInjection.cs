@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
+﻿using FutScore.Application.Interfaces;
 using FutScore.Application.Mapping;
-using FutScore.Application.Interfaces;
-using FutScore.Application.Services;
+using FutScore.Application.Services.JwtService;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FutScore.Application
 {
