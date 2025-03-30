@@ -8,7 +8,7 @@ using FutScore.Application.DTOs.Team;
 using FutScore.Application.DTOs.User;
 using FutScore.Domain.Entities;
 
-namespace FutScore.API.Mapping
+namespace FutScore.Application.Mapping
 {
     public class MappingProfile : Profile
     {

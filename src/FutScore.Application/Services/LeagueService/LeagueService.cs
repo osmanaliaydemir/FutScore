@@ -73,10 +73,7 @@ namespace FutScore.Application.Services.LeagueService
 
         public async Task<IEnumerable<LeagueDto>> GetAllLeaguesAsync()
         {
-            var leagues = await _context.Leagues
-                .Where(l => !l.IsDeleted)
-                .OrderBy(l => l.Name)
-                .ToListAsync();
+            var leagues = await _context.Leagues.Where(l => !l.IsDeleted).OrderBy(l => l.Name).ToListAsync();
             return _mapper.Map<IEnumerable<LeagueDto>>(leagues);
         }
 
@@ -127,20 +124,20 @@ namespace FutScore.Application.Services.LeagueService
             var processResult = new ProcessResult();
             var league = await _context.Leagues.Include(l => l.Teams).FirstOrDefaultAsync(l => l.Id == leagueId);
             var team = await _context.Teams.FindAsync(teamId);
-            
+
             if (league == null || team == null)
             {
                 processResult.Success = false;
                 processResult.Message = "League or Team not found";
                 return processResult;
             }
-            
+
             if (!league.Teams.Any(t => t.Id == teamId))
             {
                 league.Teams.Add(team);
                 league.UpdatedAt = DateTime.UtcNow;
                 league.UpdatedBy = "System"; // TODO: Get from current user
-                
+
                 var result = await _context.SaveChangesAsync();
                 processResult.Success = result > 0;
                 processResult.Message = processResult.Success ? "Team added successfully" : "Failed to add team";
@@ -168,7 +165,7 @@ namespace FutScore.Application.Services.LeagueService
                 league.Teams.Remove(team);
                 league.UpdatedAt = DateTime.UtcNow;
                 league.UpdatedBy = "System"; // TODO: Get from current user
-                
+
                 await _context.SaveChangesAsync();
             }
 
@@ -226,8 +223,8 @@ namespace FutScore.Application.Services.LeagueService
                 CompletedMatches = league.Matches.Count(m => m.MatchStatus == "Completed"),
                 UpcomingMatches = league.Matches.Count(m => m.MatchStatus == "Scheduled"),
                 TotalGoals = league.Matches.Sum(m => m.HomeTeamScore.Value + m.AwayTeamScore.Value),
-                AverageGoalsPerMatch = league.Matches.Any() 
-                    ? (double)league.Matches.Sum(m => m.HomeTeamScore + m.AwayTeamScore) / league.Matches.Count 
+                AverageGoalsPerMatch = league.Matches.Any()
+                    ? (double)league.Matches.Sum(m => m.HomeTeamScore + m.AwayTeamScore) / league.Matches.Count
                     : 0
             };
         }

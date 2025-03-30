@@ -10,7 +10,7 @@ namespace FutScore.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class LeagueController : ControllerBase
     {
         private readonly ILeagueService _leagueService;
