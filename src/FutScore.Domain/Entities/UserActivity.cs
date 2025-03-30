@@ -13,13 +13,13 @@ namespace FutScore.Domain.Entities
         public string ActivityType { get; set; }
 
         [StringLength(200)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public string Data { get; set; }
-        public string IpAddress { get; set; }
-        public string UserAgent { get; set; }
+        public string? Data { get; set; }
+        public string? IpAddress { get; set; }
+        public string? UserAgent { get; set; }
 
-        // Navigation Properties
-        public virtual User User { get; set; }
+        // Navigation property
+        public virtual User? User { get; set; }
     }
 } 

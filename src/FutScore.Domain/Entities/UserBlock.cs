@@ -12,13 +12,13 @@ namespace FutScore.Domain.Entities
         public Guid BlockedId { get; set; }
 
         [StringLength(200)]
-        public string Reason { get; set; }
+        public string? Reason { get; set; }
 
         public DateTime? ExpiresAt { get; set; }
         public bool IsPermanent { get; set; }
 
         // Navigation Properties
-        public virtual User Blocker { get; set; }
-        public virtual User Blocked { get; set; }
+        public virtual User? Blocker { get; set; }
+        public virtual User? Blocked { get; set; }
     }
 } 

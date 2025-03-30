@@ -9,20 +9,20 @@ namespace FutScore.Domain.Entities
         public Guid UserId { get; set; }
 
         [StringLength(50)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [StringLength(50)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
         public DateTime? DateOfBirth { get; set; }
-        public string Gender { get; set; }
-        public string Location { get; set; }
-        public string Bio { get; set; }
+        public string? Gender { get; set; }
+        public string? Location { get; set; }
+        public string? Bio { get; set; }
 
-        public string ProfilePictureUrl { get; set; }
-        public string CoverPictureUrl { get; set; }
+        public string? ProfilePictureUrl { get; set; }
+        public string? CoverPictureUrl { get; set; }
 
         // Navigation Properties
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

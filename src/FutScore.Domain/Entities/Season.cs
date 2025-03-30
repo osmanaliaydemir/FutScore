@@ -13,15 +13,15 @@ namespace FutScore.Domain.Entities
         [StringLength(50)]
         public string Name { get; set; }
 
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsCompleted { get; set; }
 
         // Navigation Properties
-        public virtual League League { get; set; }
-        public virtual ICollection<TeamSeason> TeamSeasons { get; set; }
-        public virtual ICollection<Match> Matches { get; set; }
+        public virtual League? League { get; set; }
+        public virtual ICollection<TeamSeason>? TeamSeasons { get; set; }
+        public virtual ICollection<Match>? Matches { get; set; }
     }
 } 

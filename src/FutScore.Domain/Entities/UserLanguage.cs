@@ -13,13 +13,13 @@ namespace FutScore.Domain.Entities
         public string LanguageCode { get; set; }
 
         [StringLength(50)]
-        public string LanguageName { get; set; }
+        public string? LanguageName { get; set; }
 
         public bool IsDefault { get; set; }
         public bool IsActive { get; set; }
 
-        public DateTime LastUsedAt { get; set; }
+        public DateTime? LastUsedAt { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

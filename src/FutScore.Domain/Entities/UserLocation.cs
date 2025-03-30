@@ -13,23 +13,23 @@ namespace FutScore.Domain.Entities
         public string IpAddress { get; set; }
 
         [StringLength(100)]
-        public string Country { get; set; }
+        public string? Country { get; set; }
 
         [StringLength(100)]
-        public string City { get; set; }
+        public string? City { get; set; }
 
         [StringLength(100)]
-        public string Region { get; set; }
+        public string? Region { get; set; }
 
         [StringLength(100)]
-        public string TimeZone { get; set; }
+        public string? TimeZone { get; set; }
 
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        public DateTime LastUpdatedAt { get; set; }
+        public DateTime? LastUpdatedAt { get; set; }
         public bool IsActive { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

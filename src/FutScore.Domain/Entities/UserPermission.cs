@@ -13,17 +13,17 @@ namespace FutScore.Domain.Entities
         public string Permission { get; set; }
 
         [StringLength(200)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public string Resource { get; set; }
-        public string Action { get; set; }
+        public string? Resource { get; set; }
+        public string? Action { get; set; }
 
         public bool IsActive { get; set; }
         public DateTime? ExpiresAt { get; set; }
 
-        public string GrantedBy { get; set; }
+        public string? GrantedBy { get; set; }
         public DateTime GrantedAt { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

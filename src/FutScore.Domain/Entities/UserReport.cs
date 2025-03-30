@@ -22,14 +22,15 @@ namespace FutScore.Domain.Entities
         [Required]
         public string Description { get; set; }
 
-        public string Evidence { get; set; }
-        public string Status { get; set; }
-        public string Resolution { get; set; }
+        public string? Evidence { get; set; }
+        public string? Status { get; set; }
+        public string? Resolution { get; set; }
 
         public DateTime? ResolvedAt { get; set; }
-        public string ResolvedBy { get; set; }
+        public string? ResolvedBy { get; set; }
 
-        public virtual User Reporter { get; set; }
-        public virtual User Reported { get; set; }
+        // Navigation Properties
+        public virtual User? Reporter { get; set; }
+        public virtual User? Reported { get; set; }
     }
 } 

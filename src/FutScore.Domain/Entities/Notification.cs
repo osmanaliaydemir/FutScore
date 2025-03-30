@@ -19,10 +19,10 @@ namespace FutScore.Domain.Entities
         [StringLength(50)]
         public string Type { get; set; }
 
-        public string Data { get; set; }
+        public string? Data { get; set; }
         public bool IsRead { get; set; }
         public DateTime? ReadAt { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

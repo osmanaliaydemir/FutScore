@@ -12,13 +12,13 @@ namespace FutScore.Domain.Entities
         public Guid PostId { get; set; }
 
         [StringLength(500)]
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
-        public string ShareUrl { get; set; }
-        public string Platform { get; set; }
+        public string? ShareUrl { get; set; }
+        public string? Platform { get; set; }
 
-        // Navigation Properties
-        public virtual User User { get; set; }
-        public virtual Post Post { get; set; }
+        // Navigation properties
+        public virtual User? User { get; set; }
+        public virtual Post? Post { get; set; }
     }
 } 

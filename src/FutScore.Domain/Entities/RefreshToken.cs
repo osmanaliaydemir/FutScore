@@ -11,13 +11,13 @@ namespace FutScore.Domain.Entities
         [Required]
         public string Token { get; set; }
 
-        public string DeviceInfo { get; set; }
-        public string IpAddress { get; set; }
-        public string UserAgent { get; set; }
+        public string? DeviceInfo { get; set; }
+        public string? IpAddress { get; set; }
+        public string? UserAgent { get; set; }
 
         public DateTime? ExpiresAt { get; set; }
         public bool IsRevoked { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

@@ -15,14 +15,14 @@ namespace FutScore.Domain.Entities
         [StringLength(50)]
         public string Type { get; set; }
 
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
 
         public DateTime? ExpiresAt { get; set; }
         public bool IsVerified { get; set; }
         public DateTime? VerifiedAt { get; set; }
 
         // Navigation Properties
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

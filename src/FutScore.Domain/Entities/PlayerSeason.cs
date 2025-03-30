@@ -30,14 +30,14 @@ namespace FutScore.Domain.Entities
         public int ManOfTheMatch { get; set; }
         public double Rating { get; set; }
 
-        public string Position { get; set; }
-        public string JerseyNumber { get; set; }
+        public string? Position { get; set; }
+        public string? JerseyNumber { get; set; }
         public bool IsActive { get; set; }
 
         public DateTime? ContractStartDate { get; set; }
         public DateTime? ContractEndDate { get; set; }
 
-        public virtual Player Player { get; set; }
-        public virtual Team Team { get; set; }
+        public virtual Player? Player { get; set; }
+        public virtual Team? Team { get; set; }
     }
 } 

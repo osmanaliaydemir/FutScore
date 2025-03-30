@@ -22,7 +22,7 @@ namespace FutScore.Domain.Entities
         public int PointsEarned { get; set; }
 
         // Navigation Properties
-        public virtual User User { get; set; }
-        public virtual Match Match { get; set; }
+        public virtual User? User { get; set; }
+        public virtual Match? Match { get; set; }
     }
 } 

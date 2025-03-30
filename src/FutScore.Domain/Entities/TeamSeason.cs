@@ -12,6 +12,9 @@ namespace FutScore.Domain.Entities
         public Guid LeagueId { get; set; }
 
         [Required]
+        public Guid SeasonId { get; set; }
+
+        [Required]
         [StringLength(20)]
         public string Season { get; set; }
 
@@ -34,15 +37,15 @@ namespace FutScore.Domain.Entities
         public double GoalsPerGame { get; set; }
         public double GoalsConcededPerGame { get; set; }
 
-        public string Form { get; set; }
-        public string HomeForm { get; set; }
-        public string AwayForm { get; set; }
+        public string? Form { get; set; }
+        public string? HomeForm { get; set; }
+        public string? AwayForm { get; set; }
 
         public bool IsPromoted { get; set; }
         public bool IsRelegated { get; set; }
         public bool IsQualifiedForEurope { get; set; }
 
-        public virtual Team Team { get; set; }
-        public virtual League League { get; set; }
+        public virtual Team? Team { get; set; }
+        public virtual League? League { get; set; }
     }
 } 

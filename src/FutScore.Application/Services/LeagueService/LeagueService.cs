@@ -5,10 +5,12 @@ using FutScore.Application.DTOs.Player;
 using FutScore.Application.DTOs.Team;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FutScore.Application.Services.LeagueService
@@ -17,11 +19,13 @@ namespace FutScore.Application.Services.LeagueService
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-
-        public LeagueService(AppDbContext context, IMapper mapper)
+        private IHttpContextAccessor _httpContextAccessor;
+        private Guid? _userId;
+        public LeagueService(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // CRUD Operations
@@ -29,7 +33,7 @@ namespace FutScore.Application.Services.LeagueService
         {
             var league = _mapper.Map<League>(createDto);
             league.CreatedAt = DateTime.UtcNow;
-            league.CreatedBy = "System"; // TODO: Get from current user
+            league.CreatedBy = _userId; // TODO: Get from current user
 
             _context.Leagues.Add(league);
             await _context.SaveChangesAsync();
@@ -45,7 +49,7 @@ namespace FutScore.Application.Services.LeagueService
 
             _mapper.Map(updateDto, league);
             league.UpdatedAt = DateTime.UtcNow;
-            league.UpdatedBy = "System"; // TODO: Get from current user
+            league.UpdatedBy = _userId; // TODO: Get from current user
 
             await _context.SaveChangesAsync();
             return _mapper.Map<LeagueDto>(league);
@@ -59,7 +63,7 @@ namespace FutScore.Application.Services.LeagueService
 
             league.IsDeleted = true;
             league.DeletedAt = DateTime.UtcNow;
-            league.DeletedBy = "System"; // TODO: Get from current user
+            league.DeletedBy = _userId; // TODO: Get from current user
 
             await _context.SaveChangesAsync();
             return true;
@@ -113,7 +117,7 @@ namespace FutScore.Application.Services.LeagueService
 
             league.MatchStatus = status;
             league.UpdatedAt = DateTime.UtcNow;
-            league.UpdatedBy = "System"; // TODO: Get from current user
+            league.UpdatedBy = _userId; // TODO: Get from current user
 
             await _context.SaveChangesAsync();
             return true;
@@ -136,7 +140,7 @@ namespace FutScore.Application.Services.LeagueService
             {
                 league.Teams.Add(team);
                 league.UpdatedAt = DateTime.UtcNow;
-                league.UpdatedBy = "System"; // TODO: Get from current user
+                league.UpdatedBy = _userId; // TODO: Get from current user
 
                 var result = await _context.SaveChangesAsync();
                 processResult.Success = result > 0;
@@ -164,7 +168,7 @@ namespace FutScore.Application.Services.LeagueService
             {
                 league.Teams.Remove(team);
                 league.UpdatedAt = DateTime.UtcNow;
-                league.UpdatedBy = "System"; // TODO: Get from current user
+                league.UpdatedBy = _userId; // TODO: Get from current user
 
                 await _context.SaveChangesAsync();
             }
@@ -227,6 +231,14 @@ namespace FutScore.Application.Services.LeagueService
                     ? (double)league.Matches.Sum(m => m.HomeTeamScore + m.AwayTeamScore) / league.Matches.Count
                     : 0
             };
+        }
+
+        private void SetUserIdAsync()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var value = httpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (value is not null)
+                _userId = Guid.Parse(value);
         }
     }
 }

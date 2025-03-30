@@ -18,9 +18,9 @@ namespace FutScore.Domain.Entities
         public int StreakCount { get; set; }
         public int MaxStreak { get; set; }
 
-        public DateTime LastActivityDate { get; set; }
+        public DateTime? LastActivityDate { get; set; }
         public DateTime? LastRewardClaimedAt { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

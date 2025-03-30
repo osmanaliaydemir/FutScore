@@ -17,10 +17,10 @@ namespace FutScore.Domain.Entities
         public string Title { get; set; }
 
         [StringLength(500)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public int Points { get; set; }
-        public string RewardData { get; set; }
+        public string? RewardData { get; set; }
 
         public bool IsClaimed { get; set; }
         public DateTime? ClaimedAt { get; set; }
@@ -28,6 +28,6 @@ namespace FutScore.Domain.Entities
         public DateTime ExpiresAt { get; set; }
 
         // Navigation Properties
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

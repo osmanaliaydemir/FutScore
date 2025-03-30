@@ -20,13 +20,13 @@ namespace FutScore.Domain.Entities
         public string Content { get; set; }
 
         public int Rating { get; set; }
-        public string Category { get; set; }
-        public string Status { get; set; }
+        public string? Category { get; set; }
+        public string? Status { get; set; }
 
-        public string Response { get; set; }
+        public string? Response { get; set; }
         public DateTime? RespondedAt { get; set; }
 
-        // Navigation Properties
-        public virtual User User { get; set; }
+        // Navigation property
+        public virtual User? User { get; set; }
     }
 } 

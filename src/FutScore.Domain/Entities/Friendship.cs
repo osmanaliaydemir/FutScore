@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FutScore.Domain.Entities
 {
@@ -20,7 +21,10 @@ namespace FutScore.Domain.Entities
         public DateTime? UnfriendedAt { get; set; }
 
         // Navigation Properties
-        public virtual User Requester { get; set; }
-        public virtual User Addressee { get; set; }
+        [ForeignKey("RequesterId")]
+        public virtual User? Requester { get; set; }
+
+        [ForeignKey("AddresseeId")]
+        public virtual User? Addressee { get; set; }
     }
 } 

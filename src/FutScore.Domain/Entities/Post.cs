@@ -12,9 +12,9 @@ namespace FutScore.Domain.Entities
         [Required]
         public string Content { get; set; }
 
-        public string ImageUrl { get; set; }
-        public string VideoUrl { get; set; }
-        public string Link { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? VideoUrl { get; set; }
+        public string? Link { get; set; }
 
         public bool IsPublic { get; set; }
         public bool IsPinned { get; set; }
@@ -22,10 +22,10 @@ namespace FutScore.Domain.Entities
 
         public int ViewCount { get; set; }
 
-        // Navigation Properties
-        public virtual User User { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<Like> Likes { get; set; }
-        public virtual ICollection<Share> Shares { get; set; }
+        // Navigation properties
+        public virtual User? User { get; set; }
+        public virtual ICollection<Comment>? Comments { get; set; }
+        public virtual ICollection<Like>? Likes { get; set; }
+        public virtual ICollection<Share>? Shares { get; set; }
     }
 } 

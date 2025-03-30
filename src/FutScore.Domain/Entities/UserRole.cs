@@ -10,7 +10,7 @@ namespace FutScore.Domain.Entities
         public DateTime CreatedAt { get; set; }
 
         // Navigation properties
-        public virtual User User { get; set; }
-        public virtual Role Role { get; set; }
+        public virtual User? User { get; set; }
+        public virtual Role? Role { get; set; }
     }
 } 

@@ -21,26 +21,26 @@ namespace FutScore.Domain.Entities
         [Required]
         public DateTime MatchDate { get; set; }
 
-        public string Venue { get; set; }
-        public string Stadium { get; set; }
+        public string? Venue { get; set; }
+        public string? Stadium { get; set; }
 
         public int? HomeTeamScore { get; set; }
         public int? AwayTeamScore { get; set; }
 
-        public string MatchStatus { get; set; }
-        public string MatchType { get; set; }
-        public string Competition { get; set; }
+        public string? MatchStatus { get; set; }
+        public string? MatchType { get; set; }
+        public string? Competition { get; set; }
 
         public bool IsLive { get; set; }
         public bool IsCompleted { get; set; }
         public bool IsCancelled { get; set; }
 
         // Navigation Properties
-        public virtual Season Season { get; set; }
-        public virtual Team HomeTeam { get; set; }
-        public virtual Team AwayTeam { get; set; }
-        public virtual League League { get; set; }
-        public virtual ICollection<MatchEvent> MatchEvents { get; set; }
-        public virtual ICollection<Prediction> Predictions { get; set; }
+        public virtual Season? Season { get; set; }
+        public virtual Team? HomeTeam { get; set; }
+        public virtual Team? AwayTeam { get; set; }
+        public virtual League? League { get; set; }
+        public virtual ICollection<MatchEvent>? MatchEvents { get; set; }
+        public virtual ICollection<Prediction>? Predictions { get; set; }
     }
 } 

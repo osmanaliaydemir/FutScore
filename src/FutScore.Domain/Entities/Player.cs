@@ -14,23 +14,23 @@ namespace FutScore.Domain.Entities
         public string Name { get; set; }
 
         [StringLength(50)]
-        public string Number { get; set; }
+        public string? Number { get; set; }
 
         [StringLength(50)]
-        public string Position { get; set; }
+        public string? Position { get; set; }
 
-        public DateTime DateOfBirth { get; set; }
-        public string Nationality { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? Nationality { get; set; }
 
-        public string PhotoUrl { get; set; }
+        public string? PhotoUrl { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsInjured { get; set; }
         public bool IsSuspended { get; set; }
 
         // Navigation Properties
-        public virtual Team Team { get; set; }
-        public virtual ICollection<PlayerSeason> PlayerSeasons { get; set; }
-        public virtual ICollection<MatchEvent> MatchEvents { get; set; }
+        public virtual Team? Team { get; set; }
+        public virtual ICollection<PlayerSeason>? PlayerSeasons { get; set; }
+        public virtual ICollection<MatchEvent>? MatchEvents { get; set; }
     }
 } 

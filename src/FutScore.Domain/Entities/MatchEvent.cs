@@ -19,16 +19,16 @@ namespace FutScore.Domain.Entities
         public bool IsFirstHalf { get; set; }
 
         public Guid? PlayerId { get; set; }
-        public string PlayerName { get; set; }
+        public string? PlayerName { get; set; }
 
         public Guid? TeamId { get; set; }
-        public string TeamName { get; set; }
+        public string? TeamName { get; set; }
 
-        public string Description { get; set; }
-        public string AdditionalData { get; set; }
+        public string? Description { get; set; }
+        public string? AdditionalData { get; set; }
 
-        public virtual Match Match { get; set; }
-        public virtual Player Player { get; set; }
-        public virtual Team Team { get; set; }
+        public virtual Match? Match { get; set; }
+        public virtual Player? Player { get; set; }
+        public virtual Team? Team { get; set; }
     }
 } 

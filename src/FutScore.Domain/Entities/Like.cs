@@ -15,7 +15,7 @@ namespace FutScore.Domain.Entities
         [StringLength(20)]
         public string EntityType { get; set; }
 
-        // Navigation Properties
-        public virtual User User { get; set; }
+        // Navigation property
+        public virtual User? User { get; set; }
     }
 } 

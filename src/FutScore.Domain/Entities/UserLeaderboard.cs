@@ -20,7 +20,7 @@ namespace FutScore.Domain.Entities
 
         public DateTime LastUpdatedAt { get; set; }
 
-        // Navigation Properties
-        public virtual User User { get; set; }
+        // Navigation property
+        public virtual User? User { get; set; }
     }
 } 

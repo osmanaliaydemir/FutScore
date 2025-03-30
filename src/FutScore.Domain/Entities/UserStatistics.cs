@@ -21,9 +21,9 @@ namespace FutScore.Domain.Entities
         public int CurrentStreak { get; set; }
         public int BestStreak { get; set; }
 
-        public DateTime LastMatchDate { get; set; }
-        public DateTime LastPredictionDate { get; set; }
+        public DateTime? LastMatchDate { get; set; }
+        public DateTime? LastPredictionDate { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 

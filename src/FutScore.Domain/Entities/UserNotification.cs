@@ -15,7 +15,7 @@ namespace FutScore.Domain.Entities
         public DateTime? ReadAt { get; set; }
 
         // Navigation Properties
-        public virtual User User { get; set; }
-        public virtual Notification Notification { get; set; }
+        public virtual User? User { get; set; }
+        public virtual Notification? Notification { get; set; }
     }
 } 

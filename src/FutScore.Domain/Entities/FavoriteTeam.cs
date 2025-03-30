@@ -14,7 +14,7 @@ namespace FutScore.Domain.Entities
         public DateTime AddedAt { get; set; }
 
         // Navigation Properties
-        public virtual User User { get; set; }
-        public virtual Team Team { get; set; }
+        public virtual User? User { get; set; }
+        public virtual Team? Team { get; set; }
     }
 } 

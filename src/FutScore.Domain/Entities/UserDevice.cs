@@ -17,21 +17,21 @@ namespace FutScore.Domain.Entities
         public string DeviceType { get; set; }
 
         [StringLength(100)]
-        public string DeviceName { get; set; }
+        public string? DeviceName { get; set; }
 
         [StringLength(100)]
-        public string OperatingSystem { get; set; }
+        public string? OperatingSystem { get; set; }
 
         [StringLength(100)]
-        public string Browser { get; set; }
+        public string? Browser { get; set; }
 
         [StringLength(100)]
-        public string AppVersion { get; set; }
+        public string? AppVersion { get; set; }
 
-        public string PushToken { get; set; }
+        public string? PushToken { get; set; }
         public bool IsActive { get; set; }
-        public DateTime LastUsedAt { get; set; }
+        public DateTime? LastUsedAt { get; set; }
 
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 } 
