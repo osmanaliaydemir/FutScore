@@ -1,3 +1,4 @@
+using FutScore.Application.DTOs.Role;
 using System;
 using System.Collections.Generic;
 
@@ -17,15 +18,18 @@ namespace FutScore.Application.DTOs.User
         public string Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public DateTime? LastLoginDate { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string DeletedBy { get; set; }
         public string Password { get; set; }
+        public bool IsActive { get; set; }
 
         // Navigation Properties
         public ICollection<UserRoleDto> UserRoles { get; set; }
+        public ICollection<RoleDto> Roles { get; set; }
         public ICollection<UserPermissionDto> UserPermissions { get; set; }
         public ICollection<UserSessionDto> UserSessions { get; set; }
         public ICollection<UserDeviceDto> UserDevices { get; set; }

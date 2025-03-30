@@ -42,6 +42,7 @@ namespace FutScore.Domain
         public DbSet<League> Leagues { get; set; }
         public DbSet<Prediction> Predictions { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         // Statistics DbSets
         public DbSet<PlayerSeason> PlayerSeasons { get; set; }

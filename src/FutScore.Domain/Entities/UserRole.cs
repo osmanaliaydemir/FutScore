@@ -5,16 +5,12 @@ namespace FutScore.Domain.Entities
 {
     public class UserRole : BaseEntity
     {
-        [Required]
         public Guid UserId { get; set; }
+        public Guid RoleId { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string RoleName { get; set; }
-
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
-
+        // Navigation properties
         public virtual User User { get; set; }
+        public virtual Role Role { get; set; }
     }
 } 

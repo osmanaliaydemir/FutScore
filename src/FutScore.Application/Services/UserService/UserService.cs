@@ -1,5 +1,7 @@
 using AutoMapper;
+using BCrypt.Net;
 using FutScore.Application.DTOs.User;
+using FutScore.Application.Services.RoleService;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +12,13 @@ namespace FutScore.Application.Services.UserService
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IRoleService _roleService;
 
-        public UserService(AppDbContext context, IMapper mapper)
+        public UserService(AppDbContext context, IMapper mapper, IRoleService roleService)
         {
             _context = context;
             _mapper = mapper;
+            _roleService = roleService;
         }
 
         public async Task<UserDetailDto> GetUserDetailAsync(Guid id)
@@ -207,8 +211,8 @@ namespace FutScore.Application.Services.UserService
         public async Task<List<UserDto>> GetAllAsync()
         {
             var users = await _context.Users
-                .Include(u => u.Predictions)
-                .OrderBy(u => u.Username)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
                 .ToListAsync();
 
             return _mapper.Map<List<UserDto>>(users);
@@ -217,81 +221,258 @@ namespace FutScore.Application.Services.UserService
         public async Task<UserDto> GetByIdAsync(Guid id)
         {
             var user = await _context.Users
-                .Include(u => u.Predictions)
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<ProcessResult> AddAsync(UserDto entity)
+        public async Task<UserDto> GetByUsernameAsync(string username)
         {
-            try
-            {
-                var user = _mapper.Map<User>(entity);
-                user.CreatedAt = DateTime.UtcNow;
-                user.IsActive = true;
-                //user.PasswordHash = HashPassword(entity.Password);
-                user.PasswordHash = entity.Password;
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Username == username);
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
-                return new ProcessResult { Success = true, Message = "User added successfully" };
-            }
-            catch (Exception ex)
-            {
-                return new ProcessResult { Success = false, Message = $"Error adding user: {ex.Message}" };
-            }
+            return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<ProcessResult> UpdateAsync(UserDto entity)
+        public async Task<UserDto> CreateAsync(UserCreateDto userDto)
         {
-            try
+            var user = _mapper.Map<User>(userDto);
+            user.PasswordHash = HashPassword(userDto.Password);
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            if (userDto.Roles != null)
             {
-                var user = await _context.Users.FindAsync(entity.Id);
-                if (user == null)
-                    return new ProcessResult { Success = false, Message = "User not found" };
-
-                _mapper.Map(entity, user);
-                user.UpdatedAt = DateTime.UtcNow;
-
-                //if (!string.IsNullOrEmpty(entity.Password))
-                //{
-                //    user.PasswordHash = HashPassword(entity.Password);
-                //}
-
+                foreach (var roleId in userDto.Roles)
+                {
+                    var userRole = new UserRole
+                    {
+                        UserId = user.Id,
+                        RoleId = Guid.Parse(roleId),
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.UserRoles.Add(userRole);
+                }
                 await _context.SaveChangesAsync();
-                return new ProcessResult { Success = true, Message = "User updated successfully" };
             }
-            catch (Exception ex)
-            {
-                return new ProcessResult { Success = false, Message = $"Error updating user: {ex.Message}" };
-            }
+
+            return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<ProcessResult> DeleteByIdAsync(Guid id)
+        public async Task<UserDto> UpdateAsync(UserUpdateDto userDto)
         {
-            try
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.Id == userDto.Id);
+
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            _mapper.Map(userDto, user);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            if (userDto.Roles != null)
             {
-                var user = await _context.Users
-                    .Include(u => u.Predictions)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                    return new ProcessResult { Success = false, Message = "User not found" };
-
-                if (user.Predictions.Any())
-                    return new ProcessResult { Success = false, Message = "Cannot delete user with associated predictions" };
-
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
-
-                return new ProcessResult { Success = true, Message = "User deleted successfully" };
+                _context.UserRoles.RemoveRange(user.UserRoles);
+                foreach (var roleId in userDto.Roles)
+                {
+                    var userRole = new UserRole
+                    {
+                        UserId = user.Id,
+                        RoleId =Guid.Parse(roleId),
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.UserRoles.Add(userRole);
+                }
             }
-            catch (Exception ex)
-            {
-                return new ProcessResult { Success = false, Message = $"Error deleting user: {ex.Message}" };
-            }
+
+            await _context.SaveChangesAsync();
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ValidateCredentialsAsync(string username, string password)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null)
+                return false;
+
+            return VerifyPassword(password, user.PasswordHash);
+        }
+
+        public async Task ResetPasswordAsync(Guid userId, string newPassword)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            user.PasswordHash = HashPassword(newPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsActiveAsync(Guid userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            return user?.IsActive ?? false;
+        }
+
+        public async Task<bool> IsActiveAsync(string username)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            return user?.IsActive ?? false;
+        }
+
+        public async Task<bool> IsAdminAsync(Guid userId)
+        {
+            return await IsAdminUserAsync(userId);
+        }
+
+        public async Task<bool> IsAdminAsync(string username)
+        {
+            return await IsAdminUserAsync(username);
+        }
+
+        public async Task<bool> IsAdminUserAsync(Guid userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            return user?.UserRoles.Any(ur => ur.Role.Name == "Admin") ?? false;
+        }
+
+        public async Task<bool> IsAdminUserAsync(string username)
+        {
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Username == username);
+
+            return user?.UserRoles.Any(ur => ur.Role.Name == "Admin") ?? false;
+        }
+
+        public async Task<bool> ValidateAdminCredentialsAsync(string username, string password)
+        {
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Username == username);
+
+            if (user == null || !user.IsActive)
+                return false;
+
+            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+                return false;
+
+            return VerifyPassword(password, user.PasswordHash);
+        }
+
+        public async Task ResetAdminPasswordAsync(Guid userId, string newPassword)
+        {
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+                throw new Exception("Bu kullanıcı admin değil.");
+
+            user.PasswordHash = HashPassword(newPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task ActivateAdminUserAsync(Guid userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+                throw new Exception("Bu kullanıcı admin değil.");
+
+            user.IsActive = true;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeactivateAdminUserAsync(Guid userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                throw new Exception("Kullanıcı bulunamadı.");
+
+            if (!user.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+                throw new Exception("Bu kullanıcı admin değil.");
+
+            user.IsActive = false;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<UserDto>> GetInactiveAdminUsersAsync()
+        {
+            var users = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .Where(u => !u.IsActive && u.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+                .ToListAsync();
+
+            return _mapper.Map<List<UserDto>>(users);
+        }
+
+        public async Task<List<UserDto>> GetActiveAdminUsersAsync()
+        {
+            var users = await _context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .Where(u => u.IsActive && u.UserRoles.Any(ur => ur.Role.Name == "Admin"))
+                .ToListAsync();
+
+            return _mapper.Map<List<UserDto>>(users);
+        }
+
+        private string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
     }
 } 

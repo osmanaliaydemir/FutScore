@@ -36,6 +36,7 @@ namespace FutScore.Domain.Entities
 
         public bool IsPhoneVerified { get; set; }
         public DateTime? PhoneVerifiedAt { get; set; }
+        public DateTime? LastLoginDate { get; set; }
         public string PhoneNumber { get; set; }
 
         public string ProfilePictureUrl { get; set; }

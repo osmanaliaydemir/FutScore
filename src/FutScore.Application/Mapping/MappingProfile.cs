@@ -4,6 +4,7 @@ using FutScore.Application.DTOs.Match;
 using FutScore.Application.DTOs.MatchEvent;
 using FutScore.Application.DTOs.Player;
 using FutScore.Application.DTOs.Prediction;
+using FutScore.Application.DTOs.Role;
 using FutScore.Application.DTOs.Team;
 using FutScore.Application.DTOs.User;
 using FutScore.Domain.Entities;
@@ -55,7 +56,18 @@ namespace FutScore.Application.Mapping
                 .ForMember(dest => dest.Matches, opt => opt.MapFrom(src => src.Matches))
                 .ForMember(dest => dest.Seasons, opt => opt.MapFrom(src => src.Seasons))
                 .ReverseMap();
-            //CreateMap<LeagueSeason, LeagueSeasonDto>().ReverseMap();
+            CreateMap<LeagueCreateDto, League>();
+            CreateMap<LeagueUpdateDto, League>();
+
+            // TeamSeason Mappings
+            CreateMap<TeamSeason, TeamSeasonDto>();
+            //CreateMap<TeamSeasonCreateDto, TeamSeason>();
+            //CreateMap<TeamSeasonUpdateDto, TeamSeason>();
+
+            // Role Mappings
+            CreateMap<Role, RoleDto>();
+            CreateMap<RoleCreateDto, Role>();
+            CreateMap<RoleUpdateDto, Role>();
 
             // Player Mappings
             CreateMap<Player, PlayerDto>()
@@ -75,6 +87,14 @@ namespace FutScore.Application.Mapping
                 .ForMember(dest => dest.Match, opt => opt.MapFrom(src => src.Match))
                 .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
                 .ReverseMap();
+
+            // User Mappings
+            CreateMap<UserCreateDto, User>();
+            CreateMap<UserUpdateDto, User>();
+            CreateMap<ResetPasswordDto, User>();
+
+            // UserRole Mappings
+            CreateMap<UserRole, UserRoleDto>();
         }
     }
 } 

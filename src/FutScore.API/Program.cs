@@ -77,7 +77,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 // Service Registrations
-builder.Services.AddScoped<IGenericService<UserDto>, UserService>();
 builder.Services.AddScoped<IGenericService<TeamDto>, TeamService>();
 builder.Services.AddScoped<IGenericService<MatchDto>, MatchService>();
 builder.Services.AddScoped<IGenericService<PredictionDto>, PredictionService>();

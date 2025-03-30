@@ -3,48 +3,111 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FutScore.Dashboard</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - FutScore Admin Panel</title>
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
+    <link rel="stylesheet" href="~/lib/select2/css/select2-bootstrap-5-theme.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr/css/toastr.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/FutScore.Dashboard.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">FutScore.Dashboard</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h3>FutScore Admin</h3>
             </div>
+
+            <ul class="list-unstyled components">
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString() == "/Index" ? "active" : "")">
+                    <a asp-page="/Index">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString().StartsWith("/Leagues") ? "active" : "")">
+                    <a asp-page="/Leagues/Index">
+                        <i class="fas fa-trophy"></i> Ligler
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString().StartsWith("/Teams") ? "active" : "")">
+                    <a asp-page="/Teams/Index">
+                        <i class="fas fa-users"></i> Takımlar
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString().StartsWith("/Matches") ? "active" : "")">
+                    <a asp-page="/Matches/Index">
+                        <i class="fas fa-futbol"></i> Maçlar
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString().StartsWith("/Predictions") ? "active" : "")">
+                    <a asp-page="/Predictions/Index">
+                        <i class="fas fa-chart-line"></i> Tahminler
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString().StartsWith("/Users") ? "active" : "")">
+                    <a asp-page="/Users/Index">
+                        <i class="fas fa-user-cog"></i> Kullanıcılar
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString().StartsWith("/Reports") ? "active" : "")">
+                    <a asp-page="/Reports/Index">
+                        <i class="fas fa-chart-bar"></i> Raporlar
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["Page"].ToString().StartsWith("/Settings") ? "active" : "")">
+                    <a asp-page="/Settings/Index">
+                        <i class="fas fa-cog"></i> Ayarlar
+                    </a>
+                </li>
+            </ul>
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+        <!-- Page Content -->
+        <div id="content">
+            <!-- Top Navigation -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user"></i> Admin
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i> Profil</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Şifre Değiştir</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Çıkış</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FutScore.Dashboard - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
-
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/lib/toastr/js/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
