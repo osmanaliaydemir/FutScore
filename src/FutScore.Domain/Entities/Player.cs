@@ -20,8 +20,11 @@ namespace FutScore.Domain.Entities
         public string? Position { get; set; }
 
         public DateTime? DateOfBirth { get; set; }
+
+        [StringLength(50)]
         public string? Nationality { get; set; }
 
+        [StringLength(500)]
         public string? PhotoUrl { get; set; }
 
         public bool IsActive { get; set; }

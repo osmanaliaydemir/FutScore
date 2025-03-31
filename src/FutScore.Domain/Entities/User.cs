@@ -24,31 +24,46 @@ namespace FutScore.Domain.Entities
         public string Email { get; set; }
 
         [Required]
+        [StringLength(500)]
         public string PasswordHash { get; set; }
 
         [Required]
+        [StringLength(500)]
         public string Salt { get; set; }
 
         public bool IsEmailVerified { get; set; }
         public DateTime? EmailVerifiedAt { get; set; }
+
+        [StringLength(500)]
         public string? EmailVerificationToken { get; set; }
         public DateTime? EmailVerificationTokenExpiresAt { get; set; }
 
         public bool IsPhoneVerified { get; set; }
         public DateTime? PhoneVerifiedAt { get; set; }
         public DateTime? LastLoginDate { get; set; }
+
+        [StringLength(20)]
         public string? PhoneNumber { get; set; }
 
+        [StringLength(500)]
         public string? ProfilePictureUrl { get; set; }
+
+        [StringLength(500)]
         public string? CoverPictureUrl { get; set; }
 
         public DateTime? LastLoginAt { get; set; }
+
+        [StringLength(50)]
         public string? LastLoginIp { get; set; }
+
+        [StringLength(500)]
         public string? LastLoginUserAgent { get; set; }
 
         public bool IsActive { get; set; }
         public bool IsBlocked { get; set; }
         public DateTime? BlockedUntil { get; set; }
+
+        [StringLength(500)]
         public string? BlockReason { get; set; }
 
         // Navigation Properties

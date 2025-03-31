@@ -8,8 +8,13 @@ namespace FutScore.Domain.Entities
         [Required]
         public Guid UserId { get; set; }
 
+        [StringLength(50)]
         public string? Theme { get; set; }
+
+        [StringLength(10)]
         public string? Language { get; set; }
+
+        [StringLength(50)]
         public string? TimeZone { get; set; }
 
         public bool EmailNotifications { get; set; }
@@ -19,6 +24,7 @@ namespace FutScore.Domain.Entities
         public bool ShowOnlineStatus { get; set; }
         public bool ShowLastSeen { get; set; }
 
+        [StringLength(1000)]
         public string? NotificationPreferences { get; set; }
 
         // Navigation Properties

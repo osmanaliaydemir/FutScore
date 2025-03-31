@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace FutScore.Domain.Repositories
+namespace FutScore.Infrastructure.Data
 {
     public interface IRepository<TEntity> where TEntity : class
     {

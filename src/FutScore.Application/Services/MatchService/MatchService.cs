@@ -3,16 +3,17 @@ using FutScore.Application.DTOs.Match;
 using FutScore.Application.DTOs.MatchEvent;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
+using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutScore.Application.Services.MatchService
 {
     public class MatchService : IMatchService
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public MatchService(AppDbContext context, IMapper mapper)
+        public MatchService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

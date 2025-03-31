@@ -16,8 +16,10 @@ namespace FutScore.Domain.Entities
         [StringLength(100)]
         public string PlanName { get; set; }
 
+        [StringLength(500)]
         public string? Description { get; set; }
         public decimal Price { get; set; }
+        [StringLength(10)]
         public string? Currency { get; set; }
 
         public DateTime StartDate { get; set; }
@@ -25,8 +27,11 @@ namespace FutScore.Domain.Entities
         public bool IsActive { get; set; }
         public bool IsAutoRenewal { get; set; }
 
+        [StringLength(50)]
         public string? PaymentProvider { get; set; }
+        [StringLength(100)]
         public string? SubscriptionId { get; set; }
+        [StringLength(100)]
         public string? CustomerId { get; set; }
 
         // Navigation Properties

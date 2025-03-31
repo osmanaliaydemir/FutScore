@@ -1,17 +1,21 @@
+using AutoMapper;
 using FutScore.Application.DTOs.Role;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
+using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutScore.Application.Services.RoleService
 {
     public class RoleService : IRoleService
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public RoleService(AppDbContext context)
+        public RoleService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<List<RoleDto>> GetAllAsync()

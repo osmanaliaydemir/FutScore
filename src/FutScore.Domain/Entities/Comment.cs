@@ -15,9 +15,12 @@ namespace FutScore.Domain.Entities
         public Guid? ParentCommentId { get; set; }
 
         [Required]
+        [StringLength(2000)]
         public string Content { get; set; }
 
+        [StringLength(500)]
         public string? ImageUrl { get; set; }
+        [StringLength(500)]
         public string? VideoUrl { get; set; }
 
         public bool IsEdited { get; set; }

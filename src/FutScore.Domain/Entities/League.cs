@@ -17,8 +17,13 @@ namespace FutScore.Domain.Entities
         [StringLength(50)]
         public string Country { get; set; }
 
+        [StringLength(500)]
         public string? LogoUrl { get; set; }
+
+        [StringLength(500)]
         public string? BannerUrl { get; set; }
+
+        [StringLength(50)]
         public string? MatchStatus { get; set; }
 
         public bool IsActive { get; set; }

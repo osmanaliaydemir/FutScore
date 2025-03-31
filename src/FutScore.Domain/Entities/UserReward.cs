@@ -20,6 +20,7 @@ namespace FutScore.Domain.Entities
         public string? Description { get; set; }
 
         public int Points { get; set; }
+        [StringLength(1000)]
         public string? RewardData { get; set; }
 
         public bool IsClaimed { get; set; }

@@ -5,23 +5,20 @@ using FutScore.Application.DTOs.Player;
 using FutScore.Application.DTOs.Team;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
+using FutScore.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace FutScore.Application.Services.LeagueService
 {
     public class LeagueService : ILeagueService
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private IHttpContextAccessor _httpContextAccessor;
         private Guid? _userId;
-        public LeagueService(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public LeagueService(ApplicationDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;

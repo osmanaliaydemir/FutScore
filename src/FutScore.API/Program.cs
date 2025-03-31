@@ -10,6 +10,7 @@ using FutScore.Application.Services.PredictionService;
 using FutScore.Application.Services.TeamService;
 using FutScore.Application.Services.UserService;
 using FutScore.Domain;
+using FutScore.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using FutScore.Application.Settings;
+using FutScore.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,9 +52,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Database Configuration
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add Infrastructure Services
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // JWT Configuration
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
@@ -87,6 +88,10 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<ILeagueService, LeagueService>();
 builder.Services.AddScoped<IPredictionService, PredictionService>();
+
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

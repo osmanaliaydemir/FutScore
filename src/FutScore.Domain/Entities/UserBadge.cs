@@ -19,6 +19,7 @@ namespace FutScore.Domain.Entities
         [StringLength(500)]
         public string? Description { get; set; }
 
+        [StringLength(500)]
         public string? BadgeImageUrl { get; set; }
         public int Level { get; set; }
 

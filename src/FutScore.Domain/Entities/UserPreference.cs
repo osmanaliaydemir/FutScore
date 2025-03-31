@@ -13,9 +13,13 @@ namespace FutScore.Domain.Entities
         public string Key { get; set; }
 
         [Required]
+        [StringLength(1000)]
         public string Value { get; set; }
 
+        [StringLength(200)]
         public string Description { get; set; }
+
+        [StringLength(50)]
         public string Category { get; set; }
 
         public virtual User User { get; set; }

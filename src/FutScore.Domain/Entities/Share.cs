@@ -14,7 +14,10 @@ namespace FutScore.Domain.Entities
         [StringLength(500)]
         public string? Message { get; set; }
 
+        [StringLength(500)]
         public string? ShareUrl { get; set; }
+
+        [StringLength(50)]
         public string? Platform { get; set; }
 
         // Navigation properties

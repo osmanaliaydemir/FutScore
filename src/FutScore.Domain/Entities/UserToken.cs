@@ -9,14 +9,20 @@ namespace FutScore.Domain.Entities
         public Guid UserId { get; set; }
 
         [Required]
+        [StringLength(500)]
         public string Token { get; set; }
 
         [Required]
         [StringLength(50)]
         public string TokenType { get; set; }
 
+        [StringLength(500)]
         public string? DeviceInfo { get; set; }
+
+        [StringLength(50)]
         public string? IpAddress { get; set; }
+
+        [StringLength(500)]
         public string? UserAgent { get; set; }
 
         public DateTime? ExpiresAt { get; set; }

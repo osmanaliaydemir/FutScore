@@ -15,12 +15,16 @@ namespace FutScore.Domain.Entities
         [StringLength(200)]
         public string? Description { get; set; }
 
+        [StringLength(100)]
         public string? Resource { get; set; }
+
+        [StringLength(100)]
         public string? Action { get; set; }
 
         public bool IsActive { get; set; }
         public DateTime? ExpiresAt { get; set; }
 
+        [StringLength(100)]
         public string? GrantedBy { get; set; }
         public DateTime GrantedAt { get; set; }
 

@@ -10,10 +10,14 @@ namespace FutScore.Domain.Entities
         public Guid UserId { get; set; }
 
         [Required]
+        [StringLength(5000)]
         public string Content { get; set; }
 
+        [StringLength(500)]
         public string? ImageUrl { get; set; }
+        [StringLength(500)]
         public string? VideoUrl { get; set; }
+        [StringLength(500)]
         public string? Link { get; set; }
 
         public bool IsPublic { get; set; }

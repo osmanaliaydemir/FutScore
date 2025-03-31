@@ -1,7 +1,10 @@
+using AutoMapper;
+using BCrypt.Net;
 using FutScore.Application.DTOs.User;
 using FutScore.Application.Services.RoleService;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
+using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,12 +13,14 @@ namespace FutScore.Application.Services.AdminUserService
 {
     public class AdminUserService : IAdminUserService
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
 
-        public AdminUserService(AppDbContext context, IRoleService roleService)
+        public AdminUserService(ApplicationDbContext context, IMapper mapper, IRoleService roleService)
         {
             _context = context;
+            _mapper = mapper;
             _roleService = roleService;
         }
 

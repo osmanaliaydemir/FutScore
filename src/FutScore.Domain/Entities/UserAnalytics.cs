@@ -14,18 +14,27 @@ namespace FutScore.Domain.Entities
 
         public int TotalPageViews { get; set; }
         public int UniquePageViews { get; set; }
+
+        [StringLength(1000)]
         public string? MostVisitedPages { get; set; }
 
         public int TotalInteractions { get; set; }
         public int TotalClicks { get; set; }
         public int TotalScrolls { get; set; }
 
+        [StringLength(500)]
         public string? DeviceTypes { get; set; }
+
+        [StringLength(500)]
         public string? BrowserTypes { get; set; }
+
+        [StringLength(500)]
         public string? OperatingSystems { get; set; }
 
         public DateTime? AnalyticsDate { get; set; }
         public DateTime? LastActivityDate { get; set; }
+
+        [StringLength(1000)]
         public string? ActivityPatterns { get; set; }
 
         public virtual User? User { get; set; }

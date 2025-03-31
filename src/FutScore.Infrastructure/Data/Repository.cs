@@ -1,14 +1,13 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-
-namespace FutScore.Domain.Repositories
+namespace FutScore.Infrastructure.Data
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly DbSet<TEntity> _dbSet;
 
-        public Repository(AppDbContext context)
+        public Repository(ApplicationDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<TEntity>();
@@ -53,7 +52,6 @@ namespace FutScore.Domain.Repositories
             // Predicate'i uygulayıp sonuçları döndürmek
             return await query.Where(predicate).ToListAsync();
         }
-
 
         public bool Add(TEntity entity)
         {
@@ -142,4 +140,4 @@ namespace FutScore.Domain.Repositories
             }
         }
     }
-}
+} 

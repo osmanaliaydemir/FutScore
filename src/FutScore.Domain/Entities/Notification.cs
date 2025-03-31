@@ -13,13 +13,16 @@ namespace FutScore.Domain.Entities
         public string Title { get; set; }
 
         [Required]
+        [StringLength(500)]
         public string Message { get; set; }
 
         [Required]
         [StringLength(50)]
         public string Type { get; set; }
 
+        [StringLength(1000)]
         public string? Data { get; set; }
+
         public bool IsRead { get; set; }
         public DateTime? ReadAt { get; set; }
 

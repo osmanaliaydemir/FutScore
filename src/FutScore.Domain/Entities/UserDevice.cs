@@ -28,6 +28,7 @@ namespace FutScore.Domain.Entities
         [StringLength(100)]
         public string? AppVersion { get; set; }
 
+        [StringLength(500)]
         public string? PushToken { get; set; }
         public bool IsActive { get; set; }
         public DateTime? LastUsedAt { get; set; }

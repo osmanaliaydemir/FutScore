@@ -15,8 +15,13 @@ namespace FutScore.Domain.Entities
         [StringLength(200)]
         public string? Description { get; set; }
 
+        [StringLength(1000)]
         public string? Data { get; set; }
+
+        [StringLength(50)]
         public string? IpAddress { get; set; }
+
+        [StringLength(500)]
         public string? UserAgent { get; set; }
 
         // Navigation property

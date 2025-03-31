@@ -4,17 +4,18 @@ using FutScore.Application.DTOs.User;
 using FutScore.Application.Services.RoleService;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
+using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutScore.Application.Services.UserService
 {
     public class UserService : IUserService
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
 
-        public UserService(AppDbContext context, IMapper mapper, IRoleService roleService)
+        public UserService(ApplicationDbContext context, IMapper mapper, IRoleService roleService)
         {
             _context = context;
             _mapper = mapper;
@@ -179,15 +180,6 @@ namespace FutScore.Application.Services.UserService
                 .ToListAsync();
 
             return _mapper.Map<List<UserAnalyticsDto>>(analytics);
-        }
-
-        public async Task<List<UserReportDto>> GetUserReportsAsync(Guid userId)
-        {
-            var reports = await _context.UserReports
-                .Where(r => r.UserId == userId)
-                .ToListAsync();
-
-            return _mapper.Map<List<UserReportDto>>(reports);
         }
 
         public async Task<List<UserSubscriptionDto>> GetUserSubscriptionsAsync(Guid userId)

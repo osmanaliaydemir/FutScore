@@ -15,11 +15,20 @@ namespace FutScore.Domain.Entities
         public string? LastName { get; set; }
 
         public DateTime? DateOfBirth { get; set; }
+
+        [StringLength(20)]
         public string? Gender { get; set; }
+
+        [StringLength(100)]
         public string? Location { get; set; }
+
+        [StringLength(500)]
         public string? Bio { get; set; }
 
+        [StringLength(500)]
         public string? ProfilePictureUrl { get; set; }
+
+        [StringLength(500)]
         public string? CoverPictureUrl { get; set; }
 
         // Navigation Properties

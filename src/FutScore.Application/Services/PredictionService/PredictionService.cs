@@ -3,16 +3,17 @@ using FutScore.Application.DTOs.Prediction;
 using FutScore.Application.Services.GenericService;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
+using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutScore.Application.Services.PredictionService
 {
     public class PredictionService : IPredictionService
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public PredictionService(AppDbContext context, IMapper mapper)
+        public PredictionService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;

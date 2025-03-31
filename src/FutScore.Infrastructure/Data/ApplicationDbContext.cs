@@ -1,25 +1,13 @@
-﻿using FutScore.Domain.Entities;
+using FutScore.Domain;
+using FutScore.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using System.Linq.Expressions;
 
-namespace FutScore.Domain
+namespace FutScore.Infrastructure.Data
 {
-    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    public class ApplicationDbContext : DbContext
     {
-        public AppDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=FutScoreDb;Trusted_Connection=True;MultipleActiveResultSets=true");
-
-            return new AppDbContext(optionsBuilder.Options);
-        }
-    }
-
-    public class AppDbContext : DbContext
-    {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
@@ -41,7 +29,6 @@ namespace FutScore.Domain
         public DbSet<UserProgress>? UserProgresses { get; set; }
         public DbSet<UserStatistics>? UserStatistics { get; set; }
         public DbSet<UserAnalytics>? UserAnalytics { get; set; }
-        public DbSet<UserReport>? UserReports { get; set; }
         public DbSet<UserBlock>? UserBlocks { get; set; }
         public DbSet<UserSubscription>? UserSubscriptions { get; set; }
         public DbSet<UserPayment>? UserPayments { get; set; }
@@ -64,15 +51,6 @@ namespace FutScore.Domain
         public DbSet<Configuration>? Configurations { get; set; }
         public DbSet<AuditLog>? AuditLogs { get; set; }
         public DbSet<SystemLog>? SystemLogs { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=FutScoreDb;Trusted_Connection=True;MultipleActiveResultSets=true");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -129,19 +107,6 @@ namespace FutScore.Domain
                 .HasForeignKey<UserSettings>(us => us.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure UserReport relationships
-            modelBuilder.Entity<UserReport>()
-                .HasOne(ur => ur.Reporter)
-                .WithMany()
-                .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<UserReport>()
-                .HasOne(ur => ur.Reported)
-                .WithMany()
-                .HasForeignKey(ur => ur.ReportedId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // Configure TeamSeason relationships
             modelBuilder.Entity<TeamSeason>()
                 .HasOne(ts => ts.Team)
@@ -162,7 +127,7 @@ namespace FutScore.Domain
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Apply configurations
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
             // Global query filter for soft delete
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -172,7 +137,7 @@ namespace FutScore.Domain
                     var parameter = Expression.Parameter(entityType.ClrType, "e");
                     var propertyAccess = Expression.Property(parameter, "IsDeleted");
                     var condition = Expression.Lambda(Expression.Not(propertyAccess), parameter);
-                    
+
                     modelBuilder.Entity(entityType.ClrType).HasQueryFilter(condition);
                 }
             }
@@ -215,4 +180,4 @@ namespace FutScore.Domain
             }
         }
     }
-}
+} 

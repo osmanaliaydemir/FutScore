@@ -30,7 +30,9 @@ namespace FutScore.Domain.Entities
         public int ManOfTheMatch { get; set; }
         public double Rating { get; set; }
 
+        [StringLength(50)]
         public string? Position { get; set; }
+        [StringLength(10)]
         public string? JerseyNumber { get; set; }
         public bool IsActive { get; set; }
 

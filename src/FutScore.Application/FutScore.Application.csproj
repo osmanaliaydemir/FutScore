@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FutScore.Domain\FutScore.Domain.csproj" />
+    <ProjectReference Include="..\FutScore.Infrastructure\FutScore.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

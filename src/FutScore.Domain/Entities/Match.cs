@@ -21,14 +21,22 @@ namespace FutScore.Domain.Entities
         [Required]
         public DateTime MatchDate { get; set; }
 
+        [StringLength(100)]
         public string? Venue { get; set; }
+
+        [StringLength(100)]
         public string? Stadium { get; set; }
 
         public int? HomeTeamScore { get; set; }
         public int? AwayTeamScore { get; set; }
 
+        [StringLength(50)]
         public string? MatchStatus { get; set; }
+
+        [StringLength(50)]
         public string? MatchType { get; set; }
+
+        [StringLength(100)]
         public string? Competition { get; set; }
 
         public bool IsLive { get; set; }

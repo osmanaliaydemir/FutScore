@@ -1,24 +1,24 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using FutScore.Dashboard.Authorization;
-using Microsoft.AspNetCore.Authorization;
 using FutScore.Application.Services.LeagueService;
-using FutScore.Application.Services.UserService;
-using FutScore.Application.Services.RoleService;
-using FutScore.Application.Services.PredictionService;
 using FutScore.Application.Services.MatchService;
+using FutScore.Application.Services.PredictionService;
+using FutScore.Application.Services.RoleService;
 using FutScore.Application.Services.TeamService;
-using FutScore.Domain;
+using FutScore.Application.Services.UserService;
+using FutScore.Dashboard.Authorization;
+using FutScore.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add JWT Authentication

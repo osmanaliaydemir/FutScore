@@ -19,7 +19,6 @@ namespace FutScore.Application.Services.UserService
         Task<List<UserAchievementDto>> GetUserAchievementsAsync(Guid userId);
         Task<UserProgressDto> GetUserProgressAsync(Guid userId);
         Task<List<UserAnalyticsDto>> GetUserAnalyticsAsync(Guid userId, DateTime startDate, DateTime endDate);
-        Task<List<UserReportDto>> GetUserReportsAsync(Guid userId);
         Task<List<UserSubscriptionDto>> GetUserSubscriptionsAsync(Guid userId);
         Task<List<UserPaymentDto>> GetUserPaymentsAsync(Guid userId);
         Task<UserDto> GetByIdAsync(Guid id);

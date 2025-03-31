@@ -37,8 +37,13 @@ namespace FutScore.Domain.Entities
         public double GoalsPerGame { get; set; }
         public double GoalsConcededPerGame { get; set; }
 
+        [StringLength(50)]
         public string? Form { get; set; }
+
+        [StringLength(50)]
         public string? HomeForm { get; set; }
+
+        [StringLength(50)]
         public string? AwayForm { get; set; }
 
         public bool IsPromoted { get; set; }

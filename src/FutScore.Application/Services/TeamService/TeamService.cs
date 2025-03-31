@@ -3,16 +3,18 @@ using FutScore.Application.DTOs.Match;
 using FutScore.Application.DTOs.Player;
 using FutScore.Application.DTOs.Team;
 using FutScore.Domain;
+using FutScore.Domain.Entities;
+using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FutScore.Application.Services.TeamService
 {
     public class TeamService : ITeamService
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public TeamService(AppDbContext context, IMapper mapper)
+        public TeamService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
