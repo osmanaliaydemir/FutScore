@@ -11,7 +11,7 @@ namespace FutScore.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAutoMapper(typeof(MappingProfile));
+            
             services.AddScoped<IJwtService, JwtService>();
 
             // Application Services

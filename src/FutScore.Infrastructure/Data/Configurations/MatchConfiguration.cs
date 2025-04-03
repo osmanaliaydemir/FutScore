@@ -17,9 +17,6 @@ namespace FutScore.Infrastructure.Data.Configurations
 
             builder.HasKey(m => m.Id);
 
-            builder.Property(m => m.MatchDate)
-                .IsRequired();
-
             // Relationships
             builder.HasOne(m => m.Season)
                 .WithMany(s => s.Matches)
@@ -36,7 +33,7 @@ namespace FutScore.Infrastructure.Data.Configurations
                 .HasForeignKey(m => m.AwayTeamId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-           
+
         }
     }
 }

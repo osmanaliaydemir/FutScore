@@ -61,9 +61,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// AutoMapper Configuration
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly(), 
-    Assembly.Load("FutScore.Application"));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

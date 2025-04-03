@@ -82,8 +82,7 @@ builder.Services.AddScoped<ISeasonService, SeasonService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 
-// Add AutoMapper
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 // Add Authorization
 builder.Services.AddAuthorization(options =>
