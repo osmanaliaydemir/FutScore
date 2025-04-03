@@ -19,8 +19,8 @@ namespace FutScore.Application
             services.AddScoped<ISeasonService, SeasonService>();
             services.AddScoped<ITeamService, TeamService>();
             services.AddScoped<IMatchService, MatchService>();
-            services.AddScoped<IStandingService, StandingService>();
             services.AddScoped<IPlayerService, PlayerService>();
+            services.AddScoped<IStadiumService, StadiumService>();
 
             return services;
         }

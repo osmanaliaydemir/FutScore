@@ -33,12 +33,10 @@
   <ItemGroup>
     <Folder Include="DTOs\League\" />
     <Folder Include="DTOs\Match\" />
-    <Folder Include="DTOs\Player\" />
     <Folder Include="DTOs\Prediction\" />
     <Folder Include="DTOs\Season\" />
     <Folder Include="DTOs\Team\" />
     <Folder Include="DTOs\User\" />
-    <Folder Include="Interfaces\" />
   </ItemGroup>
 
   <ItemGroup>

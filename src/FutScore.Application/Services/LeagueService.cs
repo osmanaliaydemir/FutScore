@@ -1,9 +1,11 @@
+using AutoMapper;
 using FutScore.Application.DTOs.League;
 using FutScore.Application.Interfaces;
+using FutScore.Domain;
 using FutScore.Domain.Entities;
 using FutScore.Domain.Interfaces;
-using AutoMapper;
-using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FutScore.Application.Services
 {
@@ -18,64 +20,47 @@ namespace FutScore.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<League> GetByIdAsync(int id)
+        public async Task<IEnumerable<LeagueDto>> GetAllLeaguesAsync()
         {
-            return await _leagueRepository.GetByIdAsync(id);
+            var leagues = await _leagueRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<LeagueDto>>(leagues);
         }
 
-        public async Task<IEnumerable<League>> GetAllAsync()
+        public async Task<ProcessResult> CreateLeagueAsync(LeagueDto leagueDto)
         {
-            return await _leagueRepository.GetAllAsync();
+            var league = _mapper.Map<League>(leagueDto);
+            return await _leagueRepository.AddAsync(league);
         }
 
-        public async Task<IEnumerable<League>> FindAsync(Expression<Func<League, bool>> predicate)
+        public async Task<ProcessResult> UpdateLeagueAsync(LeagueDto leagueDto)
         {
+            var existingLeague = await _leagueRepository.GetByIdAsync(leagueDto.Id);
+            if (existingLeague == null)
+            {
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Lig bulunamadý."
+                };
+            }
 
-            var result = await _leagueRepository.FindAsync(predicate);
-            return result != null ? new List<League> { result } : Enumerable.Empty<League>();
+            _mapper.Map(leagueDto, existingLeague);
+            return await _leagueRepository.UpdateAsync(existingLeague);
         }
 
-        public async Task<League> AddAsync(League entity)
+        public async Task<ProcessResult> DeleteLeagueAsync(int leagueId)
         {
-            await _leagueRepository.AddAsync(entity);
-            await _leagueRepository.SaveChangesAsync();
-            return entity;
-        }
-
-        public async Task UpdateAsync(League entity)
-        {
-            _leagueRepository.Update(entity);
-            await _leagueRepository.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            var league = await _leagueRepository.GetByIdAsync(id);
+            var league = await _leagueRepository.GetByIdAsync(leagueId);
             if (league == null)
-                throw new KeyNotFoundException($"League with ID {id} not found.");
+            {
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Lig bulunamadý."
+                };
+            }
 
-            _leagueRepository.Delete(league);
-            await _leagueRepository.SaveChangesAsync();
-        }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _leagueRepository.ExistsAsync(id);
-        }
-
-        public async Task<League> GetLeagueWithSeasonsAsync(int leagueId)
-        {
-            return await _leagueRepository.GetLeagueWithSeasonsAsync(leagueId);
-        }
-
-        public async Task<IEnumerable<League>> GetLeaguesByCountryAsync(string country)
-        {
-            return await _leagueRepository.GetLeaguesByCountryAsync(country);
-        }
-
-        public async Task<bool> IsLeagueNameUniqueAsync(string name, int? excludeId = null)
-        {
-            return await _leagueRepository.IsLeagueNameUniqueAsync(name, excludeId);
+            return await _leagueRepository.DeleteAsync(league);
         }
     }
-} 
+}

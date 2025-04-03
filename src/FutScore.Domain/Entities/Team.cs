@@ -37,7 +37,6 @@ namespace FutScore.Domain.Entities
         public virtual ICollection<SeasonTeam> SeasonTeams { get; set; }
         public virtual ICollection<Match> HomeMatches { get; set; }
         public virtual ICollection<Match> AwayMatches { get; set; }
-        public virtual ICollection<Standing> Standings { get; set; }
         public virtual ICollection<Player> Players { get; set; }
 
         public Team()
@@ -45,7 +44,6 @@ namespace FutScore.Domain.Entities
             SeasonTeams = new HashSet<SeasonTeam>();
             HomeMatches = new HashSet<Match>();
             AwayMatches = new HashSet<Match>();
-            Standings = new HashSet<Standing>();
             Players = new HashSet<Player>();
         }
     }

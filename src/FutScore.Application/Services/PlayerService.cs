@@ -1,60 +1,73 @@
+using FutScore.Application.DTOs.Player;
 using FutScore.Application.Interfaces;
 using FutScore.Domain.Entities;
-using FutScore.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using FutScore.Domain.Interfaces;
+using AutoMapper;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FutScore.Domain;
 
 namespace FutScore.Application.Services
 {
-    public class PlayerService : BaseService<Player>, IPlayerService
+    public class PlayerService : IPlayerService
     {
-        public PlayerService(ApplicationDbContext context) : base(context)
+        private readonly IPlayerRepository _playerRepository;
+        private readonly IMapper _mapper;
+
+        public PlayerService(IPlayerRepository playerRepository, IMapper mapper)
         {
+            _playerRepository = playerRepository;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Player>> GetPlayersByTeamAsync(int teamId)
+        public async Task<ProcessResult> AddPlayerAsync(PlayerDto playerDto)
         {
-            return await _dbSet
-                .Where(p => p.TeamId == teamId)
-                .OrderBy(p => p.JerseyNumber)
-                .ToListAsync();
+            var player = _mapper.Map<Player>(playerDto);
+            var result = await _playerRepository.AddAsync(player);
+            return result;
         }
 
-        public async Task<IEnumerable<Player>> GetPlayersByPositionAsync(string position)
+        public async Task<ProcessResult> UpdatePlayerAsync(PlayerDto playerDto)
         {
-            return await _dbSet
-                .Where(p => p.Position == position)
-                .Include(p => p.Team)
-                .OrderBy(p => p.Team.Name)
-                .ThenBy(p => p.JerseyNumber)
-                .ToListAsync();
-        }
-
-        public async Task TransferPlayerAsync(int playerId, int newTeamId)
-        {
-            var player = await _dbSet.FindAsync(playerId);
-            if (player == null)
-                throw new ArgumentException("Player not found", nameof(playerId));
-
-            var newTeam = await _context.Teams.FindAsync(newTeamId);
-            if (newTeam == null)
-                throw new ArgumentException("Team not found", nameof(newTeamId));
-
-            player.TeamId = newTeamId;
-            player.JerseyNumber = null; // Reset jersey number as it might conflict in new team
-
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<bool> IsJerseyNumberAvailableAsync(int teamId, int jerseyNumber, int? excludePlayerId = null)
-        {
-            var query = _dbSet.Where(p => p.TeamId == teamId && p.JerseyNumber == jerseyNumber);
-
-            if (excludePlayerId.HasValue)
+            var existingPlayer = await _playerRepository.GetByIdAsync(playerDto.Id);
+            if (existingPlayer == null)
             {
-                query = query.Where(p => p.Id != excludePlayerId.Value);
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Oyuncu bulunamadý."
+                };
             }
 
-            return !await query.AnyAsync();
+            _mapper.Map(playerDto, existingPlayer);
+            return await _playerRepository.UpdateAsync(existingPlayer);
+        }
+
+        public async Task<ProcessResult> DeletePlayerAsync(int id)
+        {
+            var player = await _playerRepository.GetByIdAsync(id);
+            if (player == null)
+            {
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Oyuncu bulunamadý."
+                };
+            }
+
+            return await _playerRepository.DeleteAsync(player);
+        }
+
+        public async Task<IEnumerable<PlayerDto>> GetAllPlayersAsync()
+        {
+            var players = await _playerRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<PlayerDto>>(players);
+        }
+
+        public async Task<PlayerDto> GetPlayerByIdAsync(int id)
+        {
+            var player = await _playerRepository.GetByIdAsync(id);
+            return _mapper.Map<PlayerDto>(player);
         }
     }
-} 
+}

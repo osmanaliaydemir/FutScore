@@ -1,11 +1,16 @@
+using FutScore.Application.DTOs.League;
+using FutScore.Domain;
 using FutScore.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FutScore.Application.Interfaces
 {
-    public interface ILeagueService : IBaseService<League>
+    public interface ILeagueService
     {
-        Task<League> GetLeagueWithSeasonsAsync(int leagueId);
-        Task<IEnumerable<League>> GetLeaguesByCountryAsync(string country);
-        Task<bool> IsLeagueNameUniqueAsync(string name, int? excludeId = null);
+        Task<IEnumerable<LeagueDto>> GetAllLeaguesAsync();
+        Task<ProcessResult> CreateLeagueAsync(LeagueDto leagueDto);
+        Task<ProcessResult> UpdateLeagueAsync(LeagueDto leagueDto);
+        Task<ProcessResult> DeleteLeagueAsync(int leagueId);
     }
-} 
+}

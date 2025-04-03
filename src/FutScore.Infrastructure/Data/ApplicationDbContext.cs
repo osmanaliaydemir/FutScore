@@ -10,9 +10,6 @@ namespace FutScore.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-
-     
-
         // Match related DbSets
         public DbSet<Match> Matches { get; set; }
         public DbSet<Team> Teams { get; set; }
@@ -20,7 +17,6 @@ namespace FutScore.Infrastructure.Data
         public DbSet<League> Leagues { get; set; }
         public DbSet<Season> Seasons { get; set; }
         public DbSet<SeasonTeam> SeasonTeams { get; set; }
-        public DbSet<Standing> Standings { get; set; }
         public DbSet<Stadium> Stadiums { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,9 +33,6 @@ namespace FutScore.Infrastructure.Data
             // Configure composite keys
             modelBuilder.Entity<SeasonTeam>()
                 .HasKey(st => new { st.SeasonId, st.TeamId });
-
-            modelBuilder.Entity<Standing>()
-                .HasKey(s => new { s.SeasonId, s.TeamId });
 
             // Configure League relationships
             modelBuilder.Entity<League>()
@@ -83,19 +76,6 @@ namespace FutScore.Infrastructure.Data
                 .HasOne(st => st.Team)
                 .WithMany(t => t.SeasonTeams)
                 .HasForeignKey(st => st.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Configure Standing relationships
-            modelBuilder.Entity<Standing>()
-                .HasOne(s => s.Season)
-                .WithMany(s => s.Standings)
-                .HasForeignKey(s => s.SeasonId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Standing>()
-                .HasOne(s => s.Team)
-                .WithMany(t => t.Standings)
-                .HasForeignKey(s => s.TeamId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Configure Player relationships

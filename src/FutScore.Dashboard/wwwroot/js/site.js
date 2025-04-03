@@ -2,300 +2,190 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Application initialized');
 
-// Sidebar Toggle
-$(document).ready(function () {
-    $('#sidebarCollapse').on('click', function () {
-        $('#sidebar').toggleClass('active');
-        $('#content').toggleClass('active');
+    // Initialize SimpleBar
+    document.querySelectorAll('[data-simplebar]').forEach(element => {
+        new SimpleBar(element);
     });
 
-    // Initialize DataTables
-    $('.datatable').DataTable({
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
-        },
-        responsive: true,
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-             '<"row"<"col-sm-12"tr>>' +
-             '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-        pageLength: 10,
-        order: [[0, 'desc']]
-    });
+    // Sidebar Toggle
+    const sidebarToggle = document.getElementById('sidebarToggleBtn');
+    const sidebar = document.querySelector('.sidebar');
+    const main = document.querySelector('.main');
 
-    // Initialize Select2
-    $('.select2').select2({
-        theme: 'bootstrap-5',
-        width: '100%'
-    });
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            main.classList.toggle('expanded');
+        });
 
-    // Toastr Configuration
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 992) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    sidebar.classList.remove('collapsed');
+                }
+            }
+        });
+    }
+
+    // AJAX Setup
+    if (typeof $ !== 'undefined') {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            },
+            beforeSend: function() {
+                showLoading();
+            },
+            complete: function() {
+                hideLoading();
+            },
+            error: function(xhr, status, error) {
+                hideLoading();
+                showError('Bir hata oluştu: ' + error);
+            }
+        });
+    }
+});
+
+// Theme Management
+(() => {
+    'use strict';
+
+    const getStoredTheme = () => localStorage.getItem('theme');
+    const setStoredTheme = theme => localStorage.setItem('theme', theme);
+
+    const getPreferredTheme = () => {
+        const storedTheme = getStoredTheme();
+        if (storedTheme) {
+            return storedTheme;
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     };
 
-    // Logout Function
-    $('#logoutBtn').on('click', function (e) {
-        e.preventDefault();
-        Swal.fire({
-            title: 'Çıkış yapmak istediğinize emin misiniz?',
-            text: "Oturumunuz sonlandırılacak.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Evet, çıkış yap',
-            cancelButtonText: 'İptal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Logout işlemi
-                window.location.href = '/Account/Logout';
-            }
+    const setTheme = theme => {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+    };
+
+    setTheme(getPreferredTheme());
+
+    const showActiveTheme = (theme) => {
+        const activeThemeIcon = document.querySelector('.theme-icon-active use');
+        const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`);
+        const svgOfActiveBtn = btnToActive?.querySelector('i')?.getAttribute('class');
+
+        document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+            element.classList.remove('active');
         });
+
+        btnToActive?.classList.add('active');
+        activeThemeIcon?.setAttribute('href', svgOfActiveBtn);
+    };
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        const storedTheme = getStoredTheme();
+        if (!storedTheme) {
+            setTheme(getPreferredTheme());
+        }
     });
 
-    // AJAX Form Submit
-    $('form[data-ajax="true"]').on('submit', function (e) {
-        e.preventDefault();
-        var form = $(this);
-        var url = form.attr('action');
-        var method = form.attr('method');
-        var data = form.serialize();
-
-        $.ajax({
-            url: url,
-            method: method,
-            data: data,
-            success: function (response) {
-                if (response.success) {
-                    toastr.success(response.message);
-                    if (response.redirectUrl) {
-                        setTimeout(function () {
-                            window.location.href = response.redirectUrl;
-                        }, 1500);
-                    }
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: function (xhr) {
-                toastr.error('Bir hata oluştu. Lütfen tekrar deneyin.');
-            }
+    document.querySelectorAll('[data-bs-theme-value]')
+        .forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const theme = toggle.getAttribute('data-bs-theme-value');
+                setStoredTheme(theme);
+                setTheme(theme);
+                showActiveTheme(theme);
+            });
         });
-    });
+})();
 
-    // Modal Form Submit
-    $('.modal-form').on('submit', function (e) {
-        e.preventDefault();
-        var form = $(this);
-        var modal = form.closest('.modal');
-        var url = form.attr('action');
-        var method = form.attr('method');
-        var data = form.serialize();
+// Loading Spinner
+function showLoading() {
+    document.getElementById('loadingSpinner').style.display = 'flex';
+}
 
-        $.ajax({
-            url: url,
-            method: method,
-            data: data,
-            success: function (response) {
-                if (response.success) {
-                    toastr.success(response.message);
-                    modal.modal('hide');
-                    if (response.redirectUrl) {
-                        setTimeout(function () {
-                            window.location.href = response.redirectUrl;
-                        }, 1500);
-                    }
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: function (xhr) {
-                toastr.error('Bir hata oluştu. Lütfen tekrar deneyin.');
-            }
-        });
-    });
+function hideLoading() {
+    document.getElementById('loadingSpinner').style.display = 'none';
+}
 
-    // Delete Confirmation
-    $('.delete-btn').on('click', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        var itemName = $(this).data('name');
-
-        Swal.fire({
-            title: 'Emin misiniz?',
-            text: `${itemName} silinecek. Bu işlem geri alınamaz!`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Evet, sil!',
-            cancelButtonText: 'İptal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    success: function (response) {
-                        if (response.success) {
-                            toastr.success(response.message);
-                            setTimeout(function () {
-                                window.location.reload();
-                            }, 1500);
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function (xhr) {
-                        toastr.error('Bir hata oluştu. Lütfen tekrar deneyin.');
-                    }
-                });
-            }
-        });
-    });
-
-    // File Upload Preview
-    $('.custom-file-input').on('change', function () {
-        var fileName = $(this).val().split('\\').pop();
-        $(this).next('.custom-file-label').html(fileName);
-    });
-
-    // Dynamic Form Loading
-    $('.dynamic-form').on('change', function () {
-        var form = $(this);
-        var url = form.data('url');
-        var target = form.data('target');
-        var data = form.serialize();
-
-        $.ajax({
-            url: url,
-            method: 'GET',
-            data: data,
-            success: function (response) {
-                $(target).html(response);
-            },
-            error: function (xhr) {
-                toastr.error('Form yüklenirken bir hata oluştu.');
-            }
-        });
-    });
-});
-
-// Global AJAX setup
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-
-// Loading spinner
-const showLoading = () => {
-    if (!document.querySelector('.loading-spinner')) {
-        const spinner = document.createElement('div');
-        spinner.className = 'loading-spinner';
-        document.body.appendChild(spinner);
-    }
-};
-
-const hideLoading = () => {
-    const spinner = document.querySelector('.loading-spinner');
-    if (spinner) {
-        spinner.remove();
-    }
-};
-
-// Global AJAX events
-$(document).ajaxStart(showLoading);
-$(document).ajaxStop(hideLoading);
-$(document).ajaxError((event, jqXHR, settings, error) => {
-    hideLoading();
-    showErrorToast('Error', 'An error occurred while processing your request.');
-});
-
-// Toast notifications
-const showSuccessToast = (title, message) => {
+// Toast Notifications
+function showSuccess(message) {
     Swal.fire({
-        title: title,
-        text: message,
         icon: 'success',
+        title: 'Başarılı!',
+        text: message,
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true
     });
-};
+}
 
-const showErrorToast = (title, message) => {
+function showError(message) {
     Swal.fire({
-        title: title,
-        text: message,
         icon: 'error',
+        title: 'Hata!',
+        text: message,
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
-        timer: 5000,
+        timer: 3000,
         timerProgressBar: true
     });
-};
+}
 
-// Confirmation dialog
-const confirmDelete = (title, text) => {
+// Confirmation Dialog
+function confirmDelete(message) {
     return Swal.fire({
-        title: title,
-        text: text,
+        title: 'Emin misiniz?',
+        text: message || 'Bu öğeyi silmek istediğinize emin misiniz?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel'
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Evet, sil!',
+        cancelButtonText: 'İptal'
     });
-};
+}
 
-// Form validation
-const validateForm = (formElement) => {
-    let isValid = true;
+// Form Validation
+function validateForm(formElement) {
     const requiredFields = formElement.querySelectorAll('[required]');
-    
+    let isValid = true;
+
     requiredFields.forEach(field => {
         if (!field.value.trim()) {
             isValid = false;
             field.classList.add('is-invalid');
             
-            if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('invalid-feedback')) {
-                const feedback = document.createElement('div');
+            // Add validation message if not exists
+            let feedback = field.nextElementSibling;
+            if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                feedback = document.createElement('div');
                 feedback.className = 'invalid-feedback';
-                feedback.textContent = 'This field is required.';
+                feedback.textContent = 'Bu alan zorunludur.';
                 field.parentNode.insertBefore(feedback, field.nextSibling);
             }
         } else {
             field.classList.remove('is-invalid');
+            
+            // Remove validation message
             const feedback = field.nextElementSibling;
             if (feedback && feedback.classList.contains('invalid-feedback')) {
                 feedback.remove();
             }
         }
     });
-    
-    return isValid;
-};
 
-// Date formatting
+    return isValid;
+}
+
+// Date Formatting
 const formatDate = (date) => {
     if (!date) return '';
     return moment(date).format('DD/MM/YYYY');
@@ -306,66 +196,54 @@ const formatDateTime = (date) => {
     return moment(date).format('DD/MM/YYYY HH:mm');
 };
 
-// DataTable defaults
-$.extend(true, $.fn.dataTable.defaults, {
-    language: {
-        search: "_INPUT_",
-        searchPlaceholder: "Search...",
-        lengthMenu: "_MENU_ records per page",
-        info: "Showing _START_ to _END_ of _TOTAL_ records",
-        infoEmpty: "Showing 0 to 0 of 0 records",
-        infoFiltered: "(filtered from _MAX_ total records)",
-        zeroRecords: "No matching records found",
-        paginate: {
-            first: '<i class="fas fa-angle-double-left"></i>',
-            previous: '<i class="fas fa-angle-left"></i>',
-            next: '<i class="fas fa-angle-right"></i>',
-            last: '<i class="fas fa-angle-double-right"></i>'
+// DataTables Default Configuration
+if (typeof $.fn.DataTable !== 'undefined') {
+    $.extend(true, $.fn.dataTable.defaults, {
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json'
+        },
+        responsive: true,
+        processing: true,
+        pageLength: 10,
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+             '<"row"<"col-sm-12"tr>>' +
+             '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+        buttons: [
+            {
+                extend: 'excel',
+                className: 'btn btn-success',
+                text: '<i class="fas fa-file-excel"></i> Excel'
+            },
+            {
+                extend: 'pdf',
+                className: 'btn btn-danger',
+                text: '<i class="fas fa-file-pdf"></i> PDF'
+            },
+            {
+                extend: 'print',
+                className: 'btn btn-info',
+                text: '<i class="fas fa-print"></i> Yazdır'
+            }
+        ]
+    });
+}
+
+// Initialize Components
+$(document).ready(() => {
+    // Initialize all tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    // Initialize all popovers
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    popoverTriggerList.map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+
+    // Initialize DataTables
+    $('.datatable').each(function() {
+        const table = $(this).DataTable();
+        
+        if (table.buttons().container()) {
+            table.buttons().container().appendTo(`#${$(this).attr('id')}_wrapper .col-md-6:eq(0)`);
         }
-    },
-    pageLength: 10,
-    ordering: true,
-    responsive: true,
-    processing: true,
-    stateSave: true,
-    dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
-         "<'row'<'col-sm-12'tr>>" +
-         "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-    buttons: [
-        {
-            extend: 'copy',
-            text: '<i class="fas fa-copy"></i> Copy',
-            className: 'btn btn-secondary btn-sm',
-            exportOptions: {
-                columns: ':not(.no-export)'
-            }
-        },
-        {
-            extend: 'excel',
-            text: '<i class="fas fa-file-excel"></i> Excel',
-            className: 'btn btn-success btn-sm',
-            exportOptions: {
-                columns: ':not(.no-export)'
-            }
-        },
-        {
-            extend: 'pdf',
-            text: '<i class="fas fa-file-pdf"></i> PDF',
-            className: 'btn btn-danger btn-sm',
-            exportOptions: {
-                columns: ':not(.no-export)'
-            }
-        },
-        {
-            extend: 'print',
-            text: '<i class="fas fa-print"></i> Print',
-            className: 'btn btn-info btn-sm',
-            exportOptions: {
-                columns: ':not(.no-export)'
-            }
-        }
-    ],
-    drawCallback: function(settings) {
-        $('.dataTables_paginate > .pagination').addClass('pagination-sm');
-    }
+    });
 });

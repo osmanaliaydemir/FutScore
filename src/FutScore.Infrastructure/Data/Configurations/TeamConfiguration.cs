@@ -32,11 +32,6 @@ namespace FutScore.Infrastructure.Data.Configurations
                 .HasForeignKey(m => m.AwayTeamId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasMany(t => t.Standings)
-                .WithOne(s => s.Team)
-                .HasForeignKey(s => s.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasMany(t => t.Players)
                 .WithOne(p => p.Team)
                 .HasForeignKey(p => p.TeamId)

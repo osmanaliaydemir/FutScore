@@ -38,13 +38,11 @@ namespace FutScore.Domain.Entities
         public virtual League League { get; set; }
         public virtual ICollection<SeasonTeam> SeasonTeams { get; set; }
         public virtual ICollection<Match> Matches { get; set; }
-        public virtual ICollection<Standing> Standings { get; set; }
 
         public Season()
         {
             SeasonTeams = new HashSet<SeasonTeam>();
             Matches = new HashSet<Match>();
-            Standings = new HashSet<Standing>();
             Status = SeasonStatus.Upcoming;
         }
     }

@@ -3,6 +3,9 @@ using FutScore.Application.Interfaces;
 using FutScore.Domain.Entities;
 using FutScore.Domain.Interfaces;
 using AutoMapper;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FutScore.Domain;
 
 namespace FutScore.Application.Services
 {
@@ -23,69 +26,47 @@ namespace FutScore.Application.Services
             return _mapper.Map<IEnumerable<SeasonDto>>(seasons);
         }
 
-        public async Task<SeasonDto> GetSeasonByIdAsync(int id)
-        {
-            var season = await _seasonRepository.GetByIdAsync(id);
-            return _mapper.Map<SeasonDto>(season);
-        }
-
-        public async Task<SeasonDto> CreateSeasonAsync(CreateSeasonDto seasonDto)
+        public async Task<ProcessResult> CreateSeasonAsync(CreateSeasonDto seasonDto)
         {
             var season = _mapper.Map<Season>(seasonDto);
-            await _seasonRepository.AddAsync(season);
-            await _seasonRepository.SaveChangesAsync();
-            return _mapper.Map<SeasonDto>(season);
+            return await _seasonRepository.AddAsync(season);
         }
 
-        public async Task UpdateSeasonAsync(UpdateSeasonDto seasonDto)
+        public async Task<ProcessResult> UpdateSeasonAsync(UpdateSeasonDto seasonDto)
         {
-            var season = await _seasonRepository.GetByIdAsync(seasonDto.Id);
+            var existingSeason = await _seasonRepository.GetByIdAsync(seasonDto.Id);
+            if (existingSeason == null)
+            {
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Sezon bulunamadý."
+                };
+            }
+
+            _mapper.Map(seasonDto, existingSeason);
+            return await _seasonRepository.UpdateAsync(existingSeason);
+        }
+
+        public async Task<ProcessResult> DeleteSeasonAsync(int seasonId)
+        {
+            var season = await _seasonRepository.GetByIdAsync(seasonId);
             if (season == null)
-                throw new KeyNotFoundException($"Season with ID {seasonDto.Id} not found.");
+            {
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Sezon bulunamadý."
+                };
+            }
 
-            _mapper.Map(seasonDto, season);
-            _seasonRepository.Update(season);
-            await _seasonRepository.SaveChangesAsync();
+            return await _seasonRepository.DeleteAsync(season);
         }
 
-        public async Task DeleteSeasonAsync(int id)
+        public async Task<SeasonDto> GetByIdAsync(int id)
         {
-            var season = await _seasonRepository.GetByIdAsync(id);
-            if (season == null)
-                throw new KeyNotFoundException($"Season with ID {id} not found.");
-
-            _seasonRepository.Delete(season);
-            await _seasonRepository.SaveChangesAsync();
-        }
-
-        public async Task<Season> GetSeasonWithTeamsAsync(int seasonId)
-        {
-            return await _seasonRepository.GetSeasonWithTeamsAsync(seasonId);
-        }
-
-        public async Task<Season> GetSeasonWithMatchesAsync(int seasonId)
-        {
-            return await _seasonRepository.GetSeasonWithMatchesAsync(seasonId);
-        }
-
-        public async Task<Season> GetSeasonWithStandingsAsync(int seasonId)
-        {
-            return await _seasonRepository.GetSeasonWithStandingsAsync(seasonId);
-        }
-
-        public async Task<IEnumerable<Season>> GetSeasonsByLeagueAsync(int leagueId)
-        {
-            return await _seasonRepository.GetSeasonsByLeagueAsync(leagueId);
-        }
-
-        public async Task<IEnumerable<Season>> GetActiveSeasonsByLeagueAsync(int leagueId)
-        {
-            return await _seasonRepository.GetActiveSeasonsByLeagueAsync(leagueId);
-        }
-
-        public async Task<bool> HasOverlappingDatesAsync(int leagueId, DateTime startDate, DateTime endDate, int? excludeId = null)
-        {
-            return await _seasonRepository.HasOverlappingDatesAsync(leagueId, startDate, endDate, excludeId);
+            var seasons = await _seasonRepository.GetByIdAsync(id);
+            return _mapper.Map<SeasonDto>(seasons);
         }
     }
-} 
+}

@@ -33,7 +33,7 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        LeaguesCount = (await _leagueService.GetAllAsync()).Count();
+        LeaguesCount = (await _leagueService.GetAllLeaguesAsync()).Count();
         TeamsCount = (await _teamService.GetAllTeamsAsync()).Count();
         MatchesCount = (await _matchService.GetAllMatchesAsync()).Count();
         

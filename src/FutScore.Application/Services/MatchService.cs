@@ -3,7 +3,10 @@ using FutScore.Application.Interfaces;
 using FutScore.Domain.Entities;
 using FutScore.Domain.Interfaces;
 using AutoMapper;
-using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using FutScore.Domain;
 
 namespace FutScore.Application.Services
 {
@@ -18,6 +21,44 @@ namespace FutScore.Application.Services
             _mapper = mapper;
         }
 
+        public async Task<ProcessResult> AddMatchAsync(MatchDto matchDto)
+        {
+            var match = _mapper.Map<Match>(matchDto);
+            var result = await _matchRepository.AddAsync(match);
+            return result;
+        }
+
+        public async Task<ProcessResult> UpdateMatchAsync(MatchDto matchDto)
+        {
+            var existingMatch = await _matchRepository.GetByIdAsync(matchDto.Id);
+            if (existingMatch == null)
+            {
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Maç bulunamadý."
+                };
+            }
+
+            _mapper.Map(matchDto, existingMatch);
+            return await _matchRepository.UpdateAsync(existingMatch);
+        }
+
+        public async Task<ProcessResult> DeleteMatchAsync(int id)
+        {
+            var match = await _matchRepository.GetByIdAsync(id);
+            if (match == null)
+            {
+                return new ProcessResult
+                {
+                    Success = false,
+                    Message = "Maç bulunamadý."
+                };
+            }
+
+            return await _matchRepository.DeleteAsync(match);
+        }
+
         public async Task<IEnumerable<MatchDto>> GetAllMatchesAsync()
         {
             var matches = await _matchRepository.GetAllAsync();
@@ -29,113 +70,5 @@ namespace FutScore.Application.Services
             var match = await _matchRepository.GetByIdAsync(id);
             return _mapper.Map<MatchDto>(match);
         }
-
-        public async Task<MatchDto> CreateMatchAsync(CreateMatchDto matchDto)
-        {
-            var match = _mapper.Map<Match>(matchDto);
-            await _matchRepository.AddAsync(match);
-            await _matchRepository.SaveChangesAsync();
-            return _mapper.Map<MatchDto>(match);
-        }
-
-        public async Task UpdateMatchAsync(UpdateMatchDto matchDto)
-        {
-            var match = await _matchRepository.GetByIdAsync(matchDto.Id);
-            if (match == null)
-                throw new KeyNotFoundException($"Match with ID {matchDto.Id} not found.");
-
-            _mapper.Map(matchDto, match);
-            _matchRepository.Update(match);
-            await _matchRepository.SaveChangesAsync();
-        }
-
-        public async Task DeleteMatchAsync(int id)
-        {
-            var match = await _matchRepository.GetByIdAsync(id);
-            if (match == null)
-                throw new KeyNotFoundException($"Match with ID {id} not found.");
-
-            _matchRepository.Delete(match);
-            await _matchRepository.SaveChangesAsync();
-        }
-
-        public async Task<IEnumerable<Match>> GetMatchesByTeamAsync(int teamId)
-        {
-            return await _matchRepository.GetMatchesByTeamAsync(teamId);
-        }
-
-        public async Task<IEnumerable<Match>> GetUpcomingMatchesAsync(int? seasonId = null)
-        {
-            return await _matchRepository.GetUpcomingMatchesAsync(seasonId);
-        }
-
-        public async Task<IEnumerable<Match>> GetCompletedMatchesAsync(int? seasonId = null)
-        {
-            return await _matchRepository.GetCompletedMatchesAsync(seasonId);
-        }
-
-        public async Task UpdateMatchScoreAsync(int matchId, int homeScore, int awayScore)
-        {
-            await _matchRepository.UpdateMatchScoreAsync(matchId, homeScore, awayScore);
-        }
-
-        public async Task FinishMatchAsync(int matchId)
-        {
-            await _matchRepository.FinishMatchAsync(matchId);
-        }
-
-        public async Task<bool> IsMatchTimeValidAsync(int seasonId, DateTime matchDate)
-        {
-            return await _matchRepository.IsMatchTimeValidAsync(seasonId, matchDate);
-        }
-
-        public async Task<bool> AreTeamsAvailableAsync(int seasonId, int homeTeamId, int awayTeamId, DateTime matchDate)
-        {
-            return await _matchRepository.AreTeamsAvailableAsync(seasonId, homeTeamId, awayTeamId, matchDate);
-        }
-
-        public async Task<Match> AddAsync(Match entity)
-        {
-            await _matchRepository.AddAsync(entity);
-            await _matchRepository.SaveChangesAsync();
-            return entity;
-        }
-
-        public async Task UpdateAsync(Match entity)
-        {
-            _matchRepository.Update(entity);
-            await _matchRepository.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            var match = await _matchRepository.GetByIdAsync(id);
-            if (match == null)
-                throw new KeyNotFoundException($"Match with ID {id} not found.");
-
-            _matchRepository.Delete(match);
-            await _matchRepository.SaveChangesAsync();
-        }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _matchRepository.ExistsAsync(id);
-        }
-
-        public async Task<IEnumerable<Match>> GetAllAsync()
-        {
-            return await _matchRepository.GetAllAsync();
-        }
-
-        public async Task<Match> GetByIdAsync(int id)
-        {
-            return await _matchRepository.GetByIdAsync(id);
-        }
-
-        public async Task<IEnumerable<Match>> FindAsync(Expression<Func<Match, bool>> predicate)
-        {
-            var result = await _matchRepository.FindAsync(predicate);
-            return result != null ? new List<Match> { result } : Enumerable.Empty<Match>();
-        }
     }
-} 
+}

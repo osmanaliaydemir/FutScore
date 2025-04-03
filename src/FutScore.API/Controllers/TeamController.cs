@@ -17,93 +17,41 @@ namespace FutScore.API.Controllers
             _teamService = teamService;
         }
 
-        /// <summary>
-        /// Gets all teams
-        /// </summary>
-        /// <returns>List of teams</returns>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<TeamDto>>> GetAllTeams()
+        public async Task<IActionResult> GetTeams()
         {
             var teams = await _teamService.GetAllTeamsAsync();
             return Ok(teams);
         }
 
-        /// <summary>
-        /// Gets teams by season id
-        /// </summary>
-        /// <param name="seasonId">Season id</param>
-        /// <returns>List of teams in the season</returns>
-        [HttpGet("season/{seasonId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<TeamDto>>> GetTeamsBySeason(int seasonId)
-        {
-            var teams = await _teamService.GetTeamsBySeasonAsync(seasonId);
-            return Ok(teams);
-        }
-
-        /// <summary>
-        /// Gets a specific team by id
-        /// </summary>
-        /// <param name="id">Team id</param>
-        /// <returns>Team details</returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<TeamDto>> GetTeamById(int id)
-        {
-            var team = await _teamService.GetTeamByIdAsync(id);
-            if (team == null)
-                return NotFound();
-
-            return Ok(team);
-        }
-
-        /// <summary>
-        /// Creates a new team
-        /// </summary>
-        /// <param name="teamDto">Team data</param>
-        /// <returns>Created team</returns>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<TeamDto>> CreateTeam([FromBody] CreateTeamDto teamDto)
+        public async Task<IActionResult> CreateTeam([FromBody] CreateTeamDto teamDto)
         {
-            var createdTeam = await _teamService.CreateTeamAsync(teamDto);
-            return CreatedAtAction(nameof(GetTeamById), new { id = createdTeam.Id }, createdTeam);
+            var result = await _teamService.CreateTeamAsync(teamDto);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result);
         }
 
-        /// <summary>
-        /// Updates an existing team
-        /// </summary>
-        /// <param name="id">Team id</param>
-        /// <param name="teamDto">Updated team data</param>
-        /// <returns>No content</returns>
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateTeam(int id, [FromBody] UpdateTeamDto teamDto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateTeam([FromBody] UpdateTeamDto teamDto)
         {
-            if (id != teamDto.Id)
-                return BadRequest();
+            var result = await _teamService.UpdateTeamAsync(teamDto);
+            if (!result.Success)
+                return BadRequest(result.Message);
 
-            await _teamService.UpdateTeamAsync(teamDto);
-            return NoContent();
+            return Ok(result);
         }
 
-        /// <summary>
-        /// Deletes a team
-        /// </summary>
-        /// <param name="id">Team id</param>
-        /// <returns>No content</returns>
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTeam(int id)
         {
-            await _teamService.DeleteTeamAsync(id);
-            return NoContent();
+            var result = await _teamService.DeleteTeamAsync(id);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result);
         }
     }
 } 

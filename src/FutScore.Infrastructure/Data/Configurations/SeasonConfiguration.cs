@@ -37,11 +37,6 @@ namespace FutScore.Infrastructure.Data.Configurations
                 .WithOne(m => m.Season)
                 .HasForeignKey(m => m.SeasonId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(s => s.Standings)
-                .WithOne(st => st.Season)
-                .HasForeignKey(st => st.SeasonId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 } 

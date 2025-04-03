@@ -1,12 +1,14 @@
-using FutScore.Domain.Entities;
+using FutScore.Application.DTOs.Player;
+using FutScore.Domain;
 
 namespace FutScore.Application.Interfaces
 {
-    public interface IPlayerService : IBaseService<Player>
+    public interface IPlayerService
     {
-        Task<IEnumerable<Player>> GetPlayersByTeamAsync(int teamId);
-        Task<IEnumerable<Player>> GetPlayersByPositionAsync(string position);
-        Task TransferPlayerAsync(int playerId, int newTeamId);
-        Task<bool> IsJerseyNumberAvailableAsync(int teamId, int jerseyNumber, int? excludePlayerId = null);
+        Task<ProcessResult> AddPlayerAsync(PlayerDto playerDto);
+        Task<ProcessResult> UpdatePlayerAsync(PlayerDto playerDto);
+        Task<ProcessResult> DeletePlayerAsync(int id);
+        Task<IEnumerable<PlayerDto>> GetAllPlayersAsync();
+        Task<PlayerDto> GetPlayerByIdAsync(int id);
     }
-} 
+}
