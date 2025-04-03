@@ -4,7 +4,6 @@ namespace FutScore.Domain.Interfaces
 {
     public interface IMatchRepository : IBaseRepository<Match>
     {
-        Task<IEnumerable<Match>> GetMatchesBySeasonAsync(int seasonId);
         Task<IEnumerable<Match>> GetMatchesByTeamAsync(int teamId);
         Task<IEnumerable<Match>> GetUpcomingMatchesAsync(int? seasonId = null);
         Task<IEnumerable<Match>> GetCompletedMatchesAsync(int? seasonId = null);

@@ -21,6 +21,7 @@ namespace FutScore.Infrastructure.Data
         public DbSet<Season> Seasons { get; set; }
         public DbSet<SeasonTeam> SeasonTeams { get; set; }
         public DbSet<Standing> Standings { get; set; }
+        public DbSet<Stadium> Stadiums { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

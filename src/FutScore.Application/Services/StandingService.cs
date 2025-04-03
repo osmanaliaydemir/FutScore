@@ -34,42 +34,42 @@ namespace FutScore.Application.Services
                 .Include(m => m.Season)
                 .FirstOrDefaultAsync(m => m.Id == matchId);
 
-            if (match == null || !match.IsFinished || !match.HomeScore.HasValue || !match.AwayScore.HasValue)
-                return;
+            //if (match == null || !match.IsFinished || !match.HomeScore.HasValue || !match.AwayScore.HasValue)
+            //    return;
 
-            var homeStanding = await GetTeamStandingAsync(match.SeasonId, match.HomeTeamId);
-            var awayStanding = await GetTeamStandingAsync(match.SeasonId, match.AwayTeamId);
+            //var homeStanding = await GetTeamStandingAsync(match.SeasonId, match.HomeTeamId);
+            //var awayStanding = await GetTeamStandingAsync(match.SeasonId, match.AwayTeamId);
 
-            if (homeStanding == null || awayStanding == null)
-                return;
+            //if (homeStanding == null || awayStanding == null)
+            //    return;
 
-            // Update home team standing
-            homeStanding.GoalsFor += match.HomeScore.Value;
-            homeStanding.GoalsAgainst += match.AwayScore.Value;
+            //// Update home team standing
+            //homeStanding.GoalsFor += match.HomeScore.Value;
+            //homeStanding.GoalsAgainst += match.AwayScore.Value;
             
-            // Update away team standing
-            awayStanding.GoalsFor += match.AwayScore.Value;
-            awayStanding.GoalsAgainst += match.HomeScore.Value;
+            //// Update away team standing
+            //awayStanding.GoalsFor += match.AwayScore.Value;
+            //awayStanding.GoalsAgainst += match.HomeScore.Value;
 
-            if (match.HomeScore > match.AwayScore)
-            {
-                homeStanding.Points += 3;
-                homeStanding.Wins += 1;
-                awayStanding.Losses += 1;
-            }
-            else if (match.HomeScore < match.AwayScore)
-            {
-                awayStanding.Points += 3;
-                awayStanding.Wins += 1;
-                homeStanding.Losses += 1;
-            }
-            else
-            {
-                homeStanding.Points += 1;
-                awayStanding.Points += 1;
-                homeStanding.Draws += 1;
-                awayStanding.Draws += 1;
-            }
+            //if (match.HomeScore > match.AwayScore)
+            //{
+            //    homeStanding.Points += 3;
+            //    homeStanding.Wins += 1;
+            //    awayStanding.Losses += 1;
+            //}
+            //else if (match.HomeScore < match.AwayScore)
+            //{
+            //    awayStanding.Points += 3;
+            //    awayStanding.Wins += 1;
+            //    homeStanding.Losses += 1;
+            //}
+            //else
+            //{
+            //    homeStanding.Points += 1;
+            //    awayStanding.Points += 1;
+            //    homeStanding.Draws += 1;
+            //    awayStanding.Draws += 1;
+            //}
 
             await _context.SaveChangesAsync();
         }
@@ -119,16 +119,16 @@ namespace FutScore.Application.Services
             }
 
             // Get all completed matches
-            var matches = await _context.Matches
-                .Where(m => m.SeasonId == seasonId && m.IsFinished && m.HomeScore.HasValue && m.AwayScore.HasValue)
-                .OrderBy(m => m.MatchDate)
-                .ToListAsync();
+            //var matches = await _context.Matches
+            //    .Where(m => m.SeasonId == seasonId && m.IsFinished && m.HomeScore.HasValue && m.AwayScore.HasValue)
+            //    .OrderBy(m => m.MatchDate)
+            //    .ToListAsync();
 
-            // Recalculate standings based on matches
-            foreach (var match in matches)
-            {
-                await UpdateStandingsAfterMatchAsync(match.Id);
-            }
+            //// Recalculate standings based on matches
+            //foreach (var match in matches)
+            //{
+            //    await UpdateStandingsAfterMatchAsync(match.Id);
+            //}
         }
     }
 } 

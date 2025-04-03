@@ -3,6 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FutScore.Domain.Entities
 {
+    public enum MatchStatus
+    {
+        Scheduled,
+        Live,
+        Completed,
+        Postponed,
+        Cancelled
+    }
+
     public class Match : BaseEntity
     {
         [Key]
@@ -19,11 +28,19 @@ namespace FutScore.Domain.Entities
         public int AwayTeamId { get; set; }
 
         [Required]
+        public int StadiumId { get; set; }
+
+        [Required]
         public DateTime MatchDate { get; set; }
 
-        public int? HomeScore { get; set; }
-        public int? AwayScore { get; set; }
-        public bool IsFinished { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+
+        public int? HomeTeamScore { get; set; }
+        public int? AwayTeamScore { get; set; }
+
+        [Required]
+        public MatchStatus Status { get; set; }
 
         // Navigation Properties
         [ForeignKey(nameof(SeasonId))]
@@ -34,5 +51,13 @@ namespace FutScore.Domain.Entities
 
         [ForeignKey(nameof(AwayTeamId))]
         public virtual Team AwayTeam { get; set; }
+
+        [ForeignKey(nameof(StadiumId))]
+        public virtual Stadium Stadium { get; set; }
+
+        public Match()
+        {
+            Status = MatchStatus.Scheduled;
+        }
     }
 } 

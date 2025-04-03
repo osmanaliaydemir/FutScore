@@ -59,11 +59,6 @@ namespace FutScore.Application.Services
             await _matchRepository.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Match>> GetMatchesBySeasonAsync(int seasonId)
-        {
-            return await _matchRepository.GetMatchesBySeasonAsync(seasonId);
-        }
-
         public async Task<IEnumerable<Match>> GetMatchesByTeamAsync(int teamId)
         {
             return await _matchRepository.GetMatchesByTeamAsync(teamId);

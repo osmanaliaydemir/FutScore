@@ -194,3 +194,178 @@ $(document).ready(function () {
         });
     });
 });
+
+// Global AJAX setup
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+// Loading spinner
+const showLoading = () => {
+    if (!document.querySelector('.loading-spinner')) {
+        const spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        document.body.appendChild(spinner);
+    }
+};
+
+const hideLoading = () => {
+    const spinner = document.querySelector('.loading-spinner');
+    if (spinner) {
+        spinner.remove();
+    }
+};
+
+// Global AJAX events
+$(document).ajaxStart(showLoading);
+$(document).ajaxStop(hideLoading);
+$(document).ajaxError((event, jqXHR, settings, error) => {
+    hideLoading();
+    showErrorToast('Error', 'An error occurred while processing your request.');
+});
+
+// Toast notifications
+const showSuccessToast = (title, message) => {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+};
+
+const showErrorToast = (title, message) => {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: 'error',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true
+    });
+};
+
+// Confirmation dialog
+const confirmDelete = (title, text) => {
+    return Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    });
+};
+
+// Form validation
+const validateForm = (formElement) => {
+    let isValid = true;
+    const requiredFields = formElement.querySelectorAll('[required]');
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            isValid = false;
+            field.classList.add('is-invalid');
+            
+            if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('invalid-feedback')) {
+                const feedback = document.createElement('div');
+                feedback.className = 'invalid-feedback';
+                feedback.textContent = 'This field is required.';
+                field.parentNode.insertBefore(feedback, field.nextSibling);
+            }
+        } else {
+            field.classList.remove('is-invalid');
+            const feedback = field.nextElementSibling;
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.remove();
+            }
+        }
+    });
+    
+    return isValid;
+};
+
+// Date formatting
+const formatDate = (date) => {
+    if (!date) return '';
+    return moment(date).format('DD/MM/YYYY');
+};
+
+const formatDateTime = (date) => {
+    if (!date) return '';
+    return moment(date).format('DD/MM/YYYY HH:mm');
+};
+
+// DataTable defaults
+$.extend(true, $.fn.dataTable.defaults, {
+    language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search...",
+        lengthMenu: "_MENU_ records per page",
+        info: "Showing _START_ to _END_ of _TOTAL_ records",
+        infoEmpty: "Showing 0 to 0 of 0 records",
+        infoFiltered: "(filtered from _MAX_ total records)",
+        zeroRecords: "No matching records found",
+        paginate: {
+            first: '<i class="fas fa-angle-double-left"></i>',
+            previous: '<i class="fas fa-angle-left"></i>',
+            next: '<i class="fas fa-angle-right"></i>',
+            last: '<i class="fas fa-angle-double-right"></i>'
+        }
+    },
+    pageLength: 10,
+    ordering: true,
+    responsive: true,
+    processing: true,
+    stateSave: true,
+    dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+         "<'row'<'col-sm-12'tr>>" +
+         "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+    buttons: [
+        {
+            extend: 'copy',
+            text: '<i class="fas fa-copy"></i> Copy',
+            className: 'btn btn-secondary btn-sm',
+            exportOptions: {
+                columns: ':not(.no-export)'
+            }
+        },
+        {
+            extend: 'excel',
+            text: '<i class="fas fa-file-excel"></i> Excel',
+            className: 'btn btn-success btn-sm',
+            exportOptions: {
+                columns: ':not(.no-export)'
+            }
+        },
+        {
+            extend: 'pdf',
+            text: '<i class="fas fa-file-pdf"></i> PDF',
+            className: 'btn btn-danger btn-sm',
+            exportOptions: {
+                columns: ':not(.no-export)'
+            }
+        },
+        {
+            extend: 'print',
+            text: '<i class="fas fa-print"></i> Print',
+            className: 'btn btn-info btn-sm',
+            exportOptions: {
+                columns: ':not(.no-export)'
+            }
+        }
+    ],
+    drawCallback: function(settings) {
+        $('.dataTables_paginate > .pagination').addClass('pagination-sm');
+    }
+});

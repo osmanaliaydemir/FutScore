@@ -3,6 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FutScore.Domain.Entities
 {
+    public enum SeasonStatus
+    {
+        Upcoming,
+        Active,
+        Completed,
+        Cancelled
+    }
+
     public class Season : BaseEntity
     {
         [Key]
@@ -22,11 +30,22 @@ namespace FutScore.Domain.Entities
         [Required]
         public DateTime EndDate { get; set; }
 
+        [Required]
+        public SeasonStatus Status { get; set; }
+
         // Navigation Properties
         [ForeignKey(nameof(LeagueId))]
         public virtual League League { get; set; }
         public virtual ICollection<SeasonTeam> SeasonTeams { get; set; }
         public virtual ICollection<Match> Matches { get; set; }
         public virtual ICollection<Standing> Standings { get; set; }
+
+        public Season()
+        {
+            SeasonTeams = new HashSet<SeasonTeam>();
+            Matches = new HashSet<Match>();
+            Standings = new HashSet<Standing>();
+            Status = SeasonStatus.Upcoming;
+        }
     }
 } 

@@ -5,7 +5,6 @@ namespace FutScore.Application.Interfaces
 {
     public interface IMatchService : IBaseService<Match>
     {
-        Task<IEnumerable<Match>> GetMatchesBySeasonAsync(int seasonId);
         Task<IEnumerable<Match>> GetMatchesByTeamAsync(int teamId);
         Task<IEnumerable<Match>> GetUpcomingMatchesAsync(int? seasonId = null);
         Task<IEnumerable<Match>> GetCompletedMatchesAsync(int? seasonId = null);

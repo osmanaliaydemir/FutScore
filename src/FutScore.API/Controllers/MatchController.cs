@@ -37,8 +37,8 @@ namespace FutScore.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesBySeason(int seasonId)
         {
-            var matches = await _matchService.GetMatchesBySeasonAsync(seasonId);
-            return Ok(matches);
+            //var matches = await _matchService.GetMatchesBySeasonAsync(seasonId);
+            return Ok(/*matches*/);
         }
 
         /// <summary>

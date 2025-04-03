@@ -1,27 +1,25 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="csrf-token" content="@Html.AntiForgeryToken()" />
     <title>@ViewData["Title"] - FutScore Dashboard</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/datatables/dataTables.bootstrap4.min.css" />
-    <link rel="stylesheet" href="~/lib/datatables/buttons.bootstrap4.min.css" />
-    <link rel="stylesheet" href="~/lib/sweetalert2/sweetalert2.min.css" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
-    <link rel="stylesheet" href="~/lib/jqueryui/themes/base/jquery-ui.min.css" />
-    <link rel="stylesheet" href="~/css/sb-admin-2.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    @await RenderSectionAsync("Styles", required: false)
+    
+    <!-- CSS -->
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet">
+    <link href="~/lib/datatables/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet">
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
 </head>
 <body id="page-top">
+    <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-                <div class="sidebar-brand-icon">
+                <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-futbol"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">FutScore</div>
@@ -32,7 +30,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" asp-page="/Index">
+                <a class="nav-link" href="/">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -48,7 +46,7 @@
 
             <!-- Nav Item - Leagues -->
             <li class="nav-item">
-                <a class="nav-link" asp-page="/Leagues/Index">
+                <a class="nav-link" href="/Leagues">
                     <i class="fas fa-fw fa-trophy"></i>
                     <span>Leagues</span>
                 </a>
@@ -56,7 +54,7 @@
 
             <!-- Nav Item - Seasons -->
             <li class="nav-item">
-                <a class="nav-link" asp-page="/Seasons/Index">
+                <a class="nav-link" href="/Seasons">
                     <i class="fas fa-fw fa-calendar"></i>
                     <span>Seasons</span>
                 </a>
@@ -64,7 +62,7 @@
 
             <!-- Nav Item - Teams -->
             <li class="nav-item">
-                <a class="nav-link" asp-page="/Teams/Index">
+                <a class="nav-link" href="/Teams">
                     <i class="fas fa-fw fa-users"></i>
                     <span>Teams</span>
                 </a>
@@ -72,19 +70,11 @@
 
             <!-- Nav Item - Matches -->
             <li class="nav-item">
-                <a class="nav-link" asp-page="/Matches/Index">
+                <a class="nav-link" href="/Matches">
                     <i class="fas fa-fw fa-gamepad"></i>
                     <span>Matches</span>
                 </a>
             </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
         </ul>
         <!-- End of Sidebar -->
 
@@ -101,22 +91,13 @@
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                                <img class="img-profile rounded-circle" src="~/img/undraw_profile.svg">
                             </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
                         </li>
                     </ul>
                 </nav>
@@ -126,7 +107,7 @@
                 <div class="container-fluid">
                     @RenderBody()
                 </div>
-                <!-- /.container-fluid -->
+                <!-- End of Page Content -->
             </div>
             <!-- End of Main Content -->
 
@@ -149,43 +130,15 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="/Identity/Account/Logout">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- JavaScript -->
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/moment/moment.min.js"></script>
-    <script src="~/lib/moment/locale/tr.js"></script>
-    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
-    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="~/lib/datatables/dataTables.buttons.min.js"></script>
-    <script src="~/lib/datatables/buttons.html5.min.js"></script>
-    <script src="~/lib/datatables/buttons.print.min.js"></script>
-    <script src="~/lib/jszip/jszip.min.js"></script>
-    <script src="~/lib/pdfmake/pdfmake.min.js"></script>
-    <script src="~/lib/pdfmake/vfs_fonts.js"></script>
+    <script src="~/lib/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
     <script src="~/js/sb-admin-2.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>
+</html> 
