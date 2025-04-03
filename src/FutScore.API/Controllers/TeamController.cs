@@ -1,15 +1,13 @@
-using FutScore.Application.DTOs.Match;
-using FutScore.Application.DTOs.Player;
-using FutScore.Application.DTOs.Team;
-using FutScore.Application.Services.TeamService;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FutScore.Application.Interfaces;
+using FutScore.Application.DTOs.Team;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FutScore.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Produces("application/json")]
     public class TeamController : ControllerBase
     {
         private readonly ITeamService _teamService;
@@ -19,121 +17,93 @@ namespace FutScore.API.Controllers
             _teamService = teamService;
         }
 
+        /// <summary>
+        /// Gets all teams
+        /// </summary>
+        /// <returns>List of teams</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TeamDto>>> GetAll()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<TeamDto>>> GetAllTeams()
         {
-            var teams = await _teamService.GetAllAsync();
+            var teams = await _teamService.GetAllTeamsAsync();
             return Ok(teams);
         }
 
+        /// <summary>
+        /// Gets teams by season id
+        /// </summary>
+        /// <param name="seasonId">Season id</param>
+        /// <returns>List of teams in the season</returns>
+        [HttpGet("season/{seasonId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<TeamDto>>> GetTeamsBySeason(int seasonId)
+        {
+            var teams = await _teamService.GetTeamsBySeasonAsync(seasonId);
+            return Ok(teams);
+        }
+
+        /// <summary>
+        /// Gets a specific team by id
+        /// </summary>
+        /// <param name="id">Team id</param>
+        /// <returns>Team details</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<TeamDto>> GetById(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<TeamDto>> GetTeamById(int id)
         {
-            var team = await _teamService.GetByIdAsync(id);
+            var team = await _teamService.GetTeamByIdAsync(id);
             if (team == null)
                 return NotFound();
+
             return Ok(team);
         }
 
-        [HttpGet("{id}/detail")]
-        public async Task<ActionResult<TeamDetailDto>> GetDetail(Guid id)
-        {
-            var team = await _teamService.GetTeamDetailAsync(id);
-            if (team == null)
-                return NotFound();
-            return Ok(team);
-        }
-
+        /// <summary>
+        /// Creates a new team
+        /// </summary>
+        /// <param name="teamDto">Team data</param>
+        /// <returns>Created team</returns>
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<TeamDto>> Create([FromBody] TeamDto teamDto)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<TeamDto>> CreateTeam([FromBody] CreateTeamDto teamDto)
         {
-            var result = await _teamService.AddAsync(teamDto);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return CreatedAtAction(nameof(GetById), new { id = teamDto.Id }, teamDto);
+            var createdTeam = await _teamService.CreateTeamAsync(teamDto);
+            return CreatedAtAction(nameof(GetTeamById), new { id = createdTeam.Id }, createdTeam);
         }
 
+        /// <summary>
+        /// Updates an existing team
+        /// </summary>
+        /// <param name="id">Team id</param>
+        /// <param name="teamDto">Updated team data</param>
+        /// <returns>No content</returns>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<TeamDto>> Update(Guid id, [FromBody] TeamDto teamDto)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateTeam(int id, [FromBody] UpdateTeamDto teamDto)
         {
             if (id != teamDto.Id)
                 return BadRequest();
 
-            var result = await _teamService.UpdateAsync(teamDto);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return Ok(teamDto);
+            await _teamService.UpdateTeamAsync(teamDto);
+            return NoContent();
         }
 
+        /// <summary>
+        /// Deletes a team
+        /// </summary>
+        /// <param name="id">Team id</param>
+        /// <returns>No content</returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(Guid id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteTeam(int id)
         {
-            var result = await _teamService.DeleteByIdAsync(id);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
+            await _teamService.DeleteTeamAsync(id);
             return NoContent();
         }
-
-        [HttpGet("{id}/players")]
-        public async Task<ActionResult<IEnumerable<PlayerDto>>> GetTeamPlayers(Guid id)
-        {
-            var players = await _teamService.GetTeamPlayersAsync(id);
-            return Ok(players);
-        }
-
-        [HttpGet("{id}/matches")]
-        public async Task<ActionResult<IEnumerable<MatchDto>>> GetTeamMatches(Guid id)
-        {
-            var matches = await _teamService.GetTeamMatchesAsync(id);
-            return Ok(matches);
-        }
-
-        [HttpGet("{id}/stats")]
-        public async Task<ActionResult<TeamStatsDto>> GetTeamStats(Guid id)
-        {
-            var stats = await _teamService.GetTeamStatsAsync(id);
-            if (stats == null)
-                return NotFound();
-            return Ok(stats);
-        }
-
-        [HttpPost("{id}/players/{playerId}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddPlayer(Guid id, Guid playerId)
-        {
-            var result = await _teamService.AddPlayerToTeamAsync(id, playerId);
-            if (!result)
-                return BadRequest(result);
-
-            return NoContent();
-        }
-
-        [HttpDelete("{id}/players/{playerId}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RemovePlayer(Guid id, Guid playerId)
-        {
-            var result = await _teamService.RemovePlayerFromTeamAsync(id, playerId);
-            if (!result)
-                return BadRequest("Failed to remove player from team");
-
-            return NoContent();
-        }
-
-        //[HttpPut("{id}/status")]
-        //[Authorize(Roles = "Admin")]
-        //public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] string status)
-        //{
-        //    var result = await _teamService.UpdateTeamStatusAsync(id, status);
-        //    if (!result)
-        //        return BadRequest("Failed to update team status");
-
-        //    return NoContent();
-        //}
     }
 } 

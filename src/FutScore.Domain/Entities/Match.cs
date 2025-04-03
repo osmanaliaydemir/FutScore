@@ -1,54 +1,38 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FutScore.Domain.Entities
 {
     public class Match : BaseEntity
     {
-        [Required]
-        public Guid SeasonId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         [Required]
-        public Guid HomeTeamId { get; set; }
+        public int SeasonId { get; set; }
 
         [Required]
-        public Guid AwayTeamId { get; set; }
+        public int HomeTeamId { get; set; }
 
         [Required]
-        public Guid LeagueId { get; set; }
+        public int AwayTeamId { get; set; }
 
         [Required]
         public DateTime MatchDate { get; set; }
 
-        [StringLength(100)]
-        public string? Venue { get; set; }
-
-        [StringLength(100)]
-        public string? Stadium { get; set; }
-
-        public int? HomeTeamScore { get; set; }
-        public int? AwayTeamScore { get; set; }
-
-        [StringLength(50)]
-        public string? MatchStatus { get; set; }
-
-        [StringLength(50)]
-        public string? MatchType { get; set; }
-
-        [StringLength(100)]
-        public string? Competition { get; set; }
-
-        public bool IsLive { get; set; }
-        public bool IsCompleted { get; set; }
-        public bool IsCancelled { get; set; }
+        public int? HomeScore { get; set; }
+        public int? AwayScore { get; set; }
+        public bool IsFinished { get; set; }
 
         // Navigation Properties
-        public virtual Season? Season { get; set; }
-        public virtual Team? HomeTeam { get; set; }
-        public virtual Team? AwayTeam { get; set; }
-        public virtual League? League { get; set; }
-        public virtual ICollection<MatchEvent>? MatchEvents { get; set; }
-        public virtual ICollection<Prediction>? Predictions { get; set; }
+        [ForeignKey(nameof(SeasonId))]
+        public virtual Season Season { get; set; }
+
+        [ForeignKey(nameof(HomeTeamId))]
+        public virtual Team HomeTeam { get; set; }
+
+        [ForeignKey(nameof(AwayTeamId))]
+        public virtual Team AwayTeam { get; set; }
     }
 } 

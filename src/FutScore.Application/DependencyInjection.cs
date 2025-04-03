@@ -1,12 +1,9 @@
 ﻿using FutScore.Application.Interfaces;
 using FutScore.Application.Mapping;
 using FutScore.Application.Services.JwtService;
-using FutScore.Application.Services.AdminUserService;
-using FutScore.Application.Services.LeagueService;
-using FutScore.Application.Services.RoleService;
-using FutScore.Application.Services.UserService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FutScore.Application.Services;
 
 namespace FutScore.Application
 {
@@ -16,10 +13,15 @@ namespace FutScore.Application
         {
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddScoped<IJwtService, JwtService>();
+
+            // Application Services
             services.AddScoped<ILeagueService, LeagueService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IAdminUserService, AdminUserService>();
+            services.AddScoped<ISeasonService, SeasonService>();
+            services.AddScoped<ITeamService, TeamService>();
+            services.AddScoped<IMatchService, MatchService>();
+            services.AddScoped<IStandingService, StandingService>();
+            services.AddScoped<IPlayerService, PlayerService>();
+
             return services;
         }
     }

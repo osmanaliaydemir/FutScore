@@ -11,120 +11,98 @@ namespace FutScore.Infrastructure.Data
         {
         }
 
-        // User related DbSets
-        public DbSet<User>? Users { get; set; }
-        public DbSet<UserRole>? UserRoles { get; set; }
-        public DbSet<UserPermission>? UserPermissions { get; set; }
-        public DbSet<UserSession>? UserSessions { get; set; }
-        public DbSet<UserSettings>? UserSettings { get; set; }
-        public DbSet<UserDevice>? UserDevices { get; set; }
-        public DbSet<UserLocation>? UserLocations { get; set; }
-        public DbSet<UserLanguage>? UserLanguages { get; set; }
-        public DbSet<UserPreference>? UserPreferences { get; set; }
-        public DbSet<UserToken>? UserTokens { get; set; }
-        public DbSet<RefreshToken>? RefreshTokens { get; set; }
-        public DbSet<UserVerification>? UserVerifications { get; set; }
-        public DbSet<UserResetPassword>? UserResetPasswords { get; set; }
-        public DbSet<UserAchievement>? UserAchievements { get; set; }
-        public DbSet<UserProgress>? UserProgresses { get; set; }
-        public DbSet<UserStatistics>? UserStatistics { get; set; }
-        public DbSet<UserAnalytics>? UserAnalytics { get; set; }
-        public DbSet<UserBlock>? UserBlocks { get; set; }
-        public DbSet<UserSubscription>? UserSubscriptions { get; set; }
-        public DbSet<UserPayment>? UserPayments { get; set; }
+     
 
         // Match related DbSets
-        public DbSet<Match>? Matches { get; set; }
-        public DbSet<MatchEvent>? MatchEvents { get; set; }
-        public DbSet<Team>? Teams { get; set; }
-        public DbSet<Player>? Players { get; set; }
-        public DbSet<League>? Leagues { get; set; }
-        public DbSet<Prediction>? Predictions { get; set; }
-        public DbSet<Friendship>? Friendships { get; set; }
-        public DbSet<Role>? Roles { get; set; }
+        public DbSet<Match> Matches { get; set; }
+        public DbSet<Team> Teams { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<League> Leagues { get; set; }
+        public DbSet<Season> Seasons { get; set; }
+        public DbSet<SeasonTeam> SeasonTeams { get; set; }
+        public DbSet<Standing> Standings { get; set; }
 
-        // Statistics DbSets
-        public DbSet<PlayerSeason>? PlayerSeasons { get; set; }
-        public DbSet<TeamSeason>? TeamSeasons { get; set; }
-
-        // System DbSets
-        public DbSet<Configuration>? Configurations { get; set; }
-        public DbSet<AuditLog>? AuditLogs { get; set; }
-        public DbSet<SystemLog>? SystemLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configure all relationships to use Restrict delete behavior
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
+            // Configure composite keys
+            modelBuilder.Entity<SeasonTeam>()
+                .HasKey(st => new { st.SeasonId, st.TeamId });
+
+            modelBuilder.Entity<Standing>()
+                .HasKey(s => new { s.SeasonId, s.TeamId });
+
+            // Configure League relationships
+            modelBuilder.Entity<League>()
+                .HasIndex(l => l.Name)
+                .IsUnique();
+
+            // Configure Season relationships
+            modelBuilder.Entity<Season>()
+                .HasOne(s => s.League)
+                .WithMany(l => l.Seasons)
+                .HasForeignKey(s => s.LeagueId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Configure Match relationships
             modelBuilder.Entity<Match>()
+                .HasOne(m => m.Season)
+                .WithMany(s => s.Matches)
+                .HasForeignKey(m => m.SeasonId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Match>()
                 .HasOne(m => m.HomeTeam)
-                .WithMany()
+                .WithMany(t => t.HomeMatches)
                 .HasForeignKey(m => m.HomeTeamId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Match>()
                 .HasOne(m => m.AwayTeam)
-                .WithMany()
+                .WithMany(t => t.AwayMatches)
                 .HasForeignKey(m => m.AwayTeamId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Match>()
-                .HasOne(m => m.League)
-                .WithMany()
-                .HasForeignKey(m => m.LeagueId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configure SeasonTeam relationships
+            modelBuilder.Entity<SeasonTeam>()
+                .HasOne(st => st.Season)
+                .WithMany(s => s.SeasonTeams)
+                .HasForeignKey(st => st.SeasonId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Configure Friendship relationships
-            modelBuilder.Entity<Friendship>()
-                .HasOne(f => f.Requester)
-                .WithMany(u => u.SentFriendRequests)
-                .HasForeignKey(f => f.RequesterId)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<SeasonTeam>()
+                .HasOne(st => st.Team)
+                .WithMany(t => t.SeasonTeams)
+                .HasForeignKey(st => st.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Friendship>()
-                .HasOne(f => f.Addressee)
-                .WithMany(u => u.ReceivedFriendRequests)
-                .HasForeignKey(f => f.AddresseeId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configure Standing relationships
+            modelBuilder.Entity<Standing>()
+                .HasOne(s => s.Season)
+                .WithMany(s => s.Standings)
+                .HasForeignKey(s => s.SeasonId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Configure UserBlock relationships
-            modelBuilder.Entity<UserBlock>()
-                .HasOne(ub => ub.Blocker)
-                .WithMany(u => u.BlockedUsers)
-                .HasForeignKey(ub => ub.BlockerId)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Standing>()
+                .HasOne(s => s.Team)
+                .WithMany(t => t.Standings)
+                .HasForeignKey(s => s.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<UserBlock>()
-                .HasOne(ub => ub.Blocked)
-                .WithMany(u => u.BlockedByUsers)
-                .HasForeignKey(ub => ub.BlockedId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Configure UserSettings relationships
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Settings)
-                .WithOne()
-                .HasForeignKey<UserSettings>(us => us.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Configure TeamSeason relationships
-            modelBuilder.Entity<TeamSeason>()
-                .HasOne(ts => ts.Team)
-                .WithMany()
-                .HasForeignKey(ts => ts.TeamId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TeamSeason>()
-                .HasOne(ts => ts.League)
-                .WithMany()
-                .HasForeignKey(ts => ts.LeagueId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<TeamSeason>()
-                .HasOne(ts => ts.Season)
-                .WithMany()
-                .HasForeignKey(ts => ts.SeasonId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Configure Player relationships
+            modelBuilder.Entity<Player>()
+                .HasOne(p => p.Team)
+                .WithMany(t => t.Players)
+                .HasForeignKey(p => p.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Apply configurations
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
@@ -174,7 +152,6 @@ namespace FutScore.Infrastructure.Data
                     case EntityState.Deleted:
                         entry.State = EntityState.Modified;
                         entry.Entity.IsDeleted = true;
-                        entry.Entity.DeletedAt = DateTime.UtcNow;
                         break;
                 }
             }

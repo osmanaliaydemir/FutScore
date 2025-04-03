@@ -20,46 +20,23 @@ namespace FutScore.Infrastructure.Data.Configurations
             builder.Property(m => m.MatchDate)
                 .IsRequired();
 
-            builder.Property(m => m.Venue)
-                .HasMaxLength(100);
-
-            builder.Property(m => m.Stadium)
-                .HasMaxLength(100);
-
-            builder.Property(m => m.MatchStatus)
-                .HasMaxLength(50);
-
-            builder.Property(m => m.MatchType)
-                .HasMaxLength(50);
-
-            builder.Property(m => m.Competition)
-                .HasMaxLength(100);
-
             // Relationships
+            builder.HasOne(m => m.Season)
+                .WithMany(s => s.Matches)
+                .HasForeignKey(m => m.SeasonId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(m => m.HomeTeam)
-                .WithMany()
+                .WithMany(t => t.HomeMatches)
                 .HasForeignKey(m => m.HomeTeamId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(m => m.AwayTeam)
-                .WithMany()
+                .WithMany(t => t.AwayMatches)
                 .HasForeignKey(m => m.AwayTeamId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
-            builder.HasOne(m => m.League)
-                .WithMany()
-                .HasForeignKey(m => m.LeagueId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(m => m.MatchEvents)
-                .WithOne(e => e.Match)
-                .HasForeignKey(e => e.MatchId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(m => m.Predictions)
-                .WithOne(p => p.Match)
-                .HasForeignKey(p => p.MatchId)
-                .OnDelete(DeleteBehavior.Cascade);
+           
         }
     }
 }

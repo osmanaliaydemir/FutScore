@@ -18,40 +18,40 @@ namespace FutScore.Application.Services.JwtService
             _jwtSettings = jwtSettings.Value;
         }
 
-        public string GenerateToken(User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
+        //public string GenerateToken(User user)
+        //{
+        //    var claims = new List<Claim>
+        //    {
+        //        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        //        new Claim(ClaimTypes.Name, user.Username),
+        //        new Claim(ClaimTypes.Email, user.Email)
+        //    };
 
-            // Add role claims
-            if (user.UserRoles != null)
-            {
-                foreach (var userRole in user.UserRoles)
-                {
-                    if (userRole.Role != null)
-                    {
-                        claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
-                    }
-                }
-            }
+        //    // Add role claims
+        //    if (user.UserRoles != null)
+        //    {
+        //        foreach (var userRole in user.UserRoles)
+        //        {
+        //            if (userRole.Role != null)
+        //            {
+        //                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+        //            }
+        //        }
+        //    }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+        //    var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: _jwtSettings.Issuer,
-                audience: _jwtSettings.Audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: credentials
-            );
+        //    var token = new JwtSecurityToken(
+        //        issuer: _jwtSettings.Issuer,
+        //        audience: _jwtSettings.Audience,
+        //        claims: claims,
+        //        expires: DateTime.UtcNow.AddHours(1),
+        //        signingCredentials: credentials
+        //    );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        //    return new JwtSecurityTokenHandler().WriteToken(token);
+        //}
 
         public ClaimsPrincipal ValidateToken(string token)
         {

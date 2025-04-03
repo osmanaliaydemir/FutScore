@@ -1,131 +1,135 @@
-using FutScore.Application.DTOs.League;
-using FutScore.Application.DTOs.Match;
-using FutScore.Application.DTOs.Player;
-using FutScore.Application.DTOs.Team;
-using FutScore.Application.Services.LeagueService;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FutScore.Application.Interfaces;
+using FutScore.Application.DTOs.League;
+using Microsoft.AspNetCore.Authorization;
+using FutScore.Domain.Entities;
+using AutoMapper;
 
 namespace FutScore.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Produces("application/json")]
     public class LeagueController : ControllerBase
     {
         private readonly ILeagueService _leagueService;
+        private readonly IMapper _mapper;
 
-        public LeagueController(ILeagueService leagueService)
+        public LeagueController(ILeagueService leagueService, IMapper mapper)
         {
             _leagueService = leagueService;
+            _mapper = mapper;
         }
 
-        // CRUD Operations
-        [HttpPost]
-        public async Task<ActionResult<LeagueDto>> CreateLeague([FromBody] LeagueCreateDto createDto)
+        /// <summary>
+        /// Gets all leagues
+        /// </summary>
+        /// <returns>List of leagues</returns>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<LeagueDto>>> GetAllLeagues()
         {
-            var league = await _leagueService.CreateLeagueAsync(createDto);
-            return CreatedAtAction(nameof(GetById), new { id = league.Id }, league);
+            var leagues = await _leagueService.GetAllAsync();
+            return Ok(_mapper.Map<IEnumerable<LeagueDto>>(leagues));
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<LeagueDto>> UpdateLeague(Guid id, [FromBody] LeagueUpdateDto updateDto)
+        /// <summary>
+        /// Gets a specific league by id
+        /// </summary>
+        /// <param name="id">League id</param>
+        /// <returns>League details</returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<LeagueDto>> GetLeagueById(int id)
         {
-            var league = await _leagueService.UpdateLeagueAsync(id, updateDto);
+            var league = await _leagueService.GetByIdAsync(id);
             if (league == null)
                 return NotFound();
-            return Ok(league);
+
+            return Ok(_mapper.Map<LeagueDto>(league));
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteLeague(Guid id)
+        /// <summary>
+        /// Creates a new league
+        /// </summary>
+        /// <param name="leagueDto">League data</param>
+        /// <returns>Created league</returns>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<LeagueDto>> CreateLeague(LeagueDto leagueDto)
         {
-            var result = await _leagueService.DeleteLeagueAsync(id);
-            if (!result)
+            var league = _mapper.Map<League>(leagueDto);
+            var createdLeague = await _leagueService.AddAsync(league);
+            return CreatedAtAction(nameof(GetLeagueById), new { id = createdLeague.Id }, _mapper.Map<LeagueDto>(createdLeague));
+        }
+
+        /// <summary>
+        /// Updates an existing league
+        /// </summary>
+        /// <param name="id">League id</param>
+        /// <param name="leagueDto">Updated league data</param>
+        /// <returns>No content</returns>
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateLeague(int id, LeagueDto leagueDto)
+        {
+            if (id != leagueDto.Id)
+                return BadRequest();
+
+            var league = await _leagueService.GetByIdAsync(id);
+            if (league == null)
                 return NotFound();
+
+            _mapper.Map(leagueDto, league);
+            await _leagueService.UpdateAsync(league);
+
             return NoContent();
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<LeagueDto>>> GetAll()
+        /// <summary>
+        /// Deletes a league
+        /// </summary>
+        /// <param name="id">League id</param>
+        /// <returns>No content</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteLeague(int id)
         {
-            var leagues = await _leagueService.GetAllLeaguesAsync();
-            return Ok(leagues);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<LeagueDto>> GetById(Guid id)
-        {
-            var league = await _leagueService.GetLeagueByIdAsync(id);
+            var league = await _leagueService.GetByIdAsync(id);
             if (league == null)
                 return NotFound();
+
+            await _leagueService.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [HttpGet("withSeasons/{id}")]
+        public async Task<ActionResult<League>> GetLeagueWithSeasons(int id)
+        {
+            var league = await _leagueService.GetLeagueWithSeasonsAsync(id);
+            if (league == null)
+                return NotFound();
+
             return Ok(league);
         }
 
-        // Additional Operations
-
-        [HttpGet("country/{country}")]
-        public async Task<ActionResult<List<LeagueDto>>> GetLeaguesByCountry(string country)
+        [HttpGet("byCountry/{country}")]
+        public async Task<ActionResult<IEnumerable<League>>> GetLeaguesByCountry(string country)
         {
             var leagues = await _leagueService.GetLeaguesByCountryAsync(country);
             return Ok(leagues);
         }
 
-        [HttpPut("{id}/status")]
-        public async Task<ActionResult> UpdateStatus(Guid id, [FromBody] string status)
+        [HttpGet("checkName")]
+        public async Task<ActionResult<bool>> IsLeagueNameUnique(string name, int? excludeId = null)
         {
-            var result = await _leagueService.UpdateLeagueStatusAsync(id, status);
-            if (!result)
-                return NotFound();
-            return NoContent();
-        }
-
-        [HttpPost("{leagueId}/teams/{teamId}")]
-        public async Task<ActionResult> AddTeam(Guid leagueId, Guid teamId)
-        {
-            var result = await _leagueService.AddTeamToLeagueAsync(leagueId, teamId);
-            if (!result.Success)
-                return BadRequest(result.Message);
-            return NoContent();
-        }
-
-        [HttpDelete("{leagueId}/teams/{teamId}")]
-        public async Task<ActionResult> RemoveTeam(Guid leagueId, Guid teamId)
-        {
-            var result = await _leagueService.RemoveTeamFromLeagueAsync(leagueId, teamId);
-            if (!result)
-                return NotFound();
-            return NoContent();
-        }
-
-        [HttpGet("{id}/teams")]
-        public async Task<ActionResult<List<TeamDto>>> GetTeams(Guid id)
-        {
-            var teams = await _leagueService.GetLeagueTeamsAsync(id);
-            return Ok(teams);
-        }
-
-        [HttpGet("{id}/matches")]
-        public async Task<ActionResult<List<MatchDto>>> GetMatches(Guid id)
-        {
-            var matches = await _leagueService.GetLeagueMatchesAsync(id);
-            return Ok(matches);
-        }
-
-        [HttpGet("{id}/players")]
-        public async Task<ActionResult<List<PlayerDto>>> GetPlayers(Guid id)
-        {
-            var players = await _leagueService.GetLeaguePlayersAsync(id);
-            return Ok(players);
-        }
-
-        [HttpGet("{id}/stats")]
-        public async Task<ActionResult<LeagueStatsDto>> GetStats(Guid id)
-        {
-            var stats = await _leagueService.GetLeagueStatsAsync(id);
-            if (stats == null)
-                return NotFound();
-            return Ok(stats);
+            var isUnique = await _leagueService.IsLeagueNameUniqueAsync(name, excludeId);
+            return Ok(isUnique);
         }
     }
 } 

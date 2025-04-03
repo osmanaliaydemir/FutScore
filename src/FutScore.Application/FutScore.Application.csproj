@@ -7,6 +7,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\AdminUserService\**" />
+    <Compile Remove="Services\LeagueService\**" />
+    <Compile Remove="Services\MatchService\**" />
+    <Compile Remove="Services\PredictionService\**" />
+    <Compile Remove="Services\RoleService\**" />
+    <Compile Remove="Services\TeamService\**" />
+    <Compile Remove="Services\UserService\**" />
+    <EmbeddedResource Remove="Services\AdminUserService\**" />
+    <EmbeddedResource Remove="Services\LeagueService\**" />
+    <EmbeddedResource Remove="Services\MatchService\**" />
+    <EmbeddedResource Remove="Services\PredictionService\**" />
+    <EmbeddedResource Remove="Services\RoleService\**" />
+    <EmbeddedResource Remove="Services\TeamService\**" />
+    <EmbeddedResource Remove="Services\UserService\**" />
+    <None Remove="Services\AdminUserService\**" />
+    <None Remove="Services\LeagueService\**" />
+    <None Remove="Services\MatchService\**" />
+    <None Remove="Services\PredictionService\**" />
+    <None Remove="Services\RoleService\**" />
+    <None Remove="Services\TeamService\**" />
+    <None Remove="Services\UserService\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\League\" />
+    <Folder Include="DTOs\Match\" />
+    <Folder Include="DTOs\Player\" />
+    <Folder Include="DTOs\Prediction\" />
+    <Folder Include="DTOs\Season\" />
+    <Folder Include="DTOs\Team\" />
+    <Folder Include="DTOs\User\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>
 

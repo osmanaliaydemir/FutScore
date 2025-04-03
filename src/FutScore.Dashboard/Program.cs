@@ -1,10 +1,5 @@
-using FutScore.Application.Services.LeagueService;
-using FutScore.Application.Services.MatchService;
-using FutScore.Application.Services.PredictionService;
-using FutScore.Application.Services.RoleService;
-using FutScore.Application.Services.TeamService;
-using FutScore.Application.Services.UserService;
 using FutScore.Dashboard.Authorization;
+using FutScore.Domain;
 using FutScore.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -48,12 +43,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
-builder.Services.AddScoped<ILeagueService, LeagueService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IPredictionService, PredictionService>();
-builder.Services.AddScoped<IMatchService, MatchService>();
-builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<ProcessResult>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

@@ -1,14 +1,12 @@
-using FutScore.Application.DTOs.Match;
-using FutScore.Application.DTOs.MatchEvent;
-using FutScore.Application.Services.MatchService;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FutScore.Application.Interfaces;
+using FutScore.Application.DTOs.Match;
 
 namespace FutScore.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Produces("application/json")]
     public class MatchController : ControllerBase
     {
         private readonly IMatchService _matchService;
@@ -18,100 +16,105 @@ namespace FutScore.API.Controllers
             _matchService = matchService;
         }
 
+        /// <summary>
+        /// Gets all matches
+        /// </summary>
+        /// <returns>List of matches</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MatchDto>>> GetAll()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetAllMatches()
         {
-            var matches = await _matchService.GetAllAsync();
+            var matches = await _matchService.GetAllMatchesAsync();
             return Ok(matches);
         }
 
+        /// <summary>
+        /// Gets matches by season id
+        /// </summary>
+        /// <param name="seasonId">Season id</param>
+        /// <returns>List of matches in the season</returns>
+        [HttpGet("season/{seasonId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesBySeason(int seasonId)
+        {
+            var matches = await _matchService.GetMatchesBySeasonAsync(seasonId);
+            return Ok(matches);
+        }
+
+        /// <summary>
+        /// Gets matches by team id
+        /// </summary>
+        /// <param name="teamId">Team id</param>
+        /// <returns>List of matches for the team</returns>
+        [HttpGet("team/{teamId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatchesByTeam(int teamId)
+        {
+            var matches = await _matchService.GetMatchesByTeamAsync(teamId);
+            return Ok(matches);
+        }
+
+        /// <summary>
+        /// Gets a specific match by id
+        /// </summary>
+        /// <param name="id">Match id</param>
+        /// <returns>Match details</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<MatchDto>> GetById(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<MatchDto>> GetMatchById(int id)
         {
-            var match = await _matchService.GetByIdAsync(id);
+            var match = await _matchService.GetMatchByIdAsync(id);
             if (match == null)
                 return NotFound();
+
             return Ok(match);
         }
 
-        [HttpGet("{id}/detail")]
-        public async Task<ActionResult<MatchDetailDto>> GetDetail(Guid id)
-        {
-            var match = await _matchService.GetMatchDetailAsync(id);
-            if (match == null)
-                return NotFound();
-            return Ok(match);
-        }
-
+        /// <summary>
+        /// Creates a new match
+        /// </summary>
+        /// <param name="matchDto">Match data</param>
+        /// <returns>Created match</returns>
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<MatchDto>> Create([FromBody] MatchDto matchDto)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<MatchDto>> CreateMatch([FromBody] CreateMatchDto matchDto)
         {
-            var result = await _matchService.AddAsync(matchDto);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return CreatedAtAction(nameof(GetById), new { id = matchDto.Id }, matchDto);
+            var createdMatch = await _matchService.CreateMatchAsync(matchDto);
+            return CreatedAtAction(nameof(GetMatchById), new { id = createdMatch.Id }, createdMatch);
         }
 
+        /// <summary>
+        /// Updates an existing match
+        /// </summary>
+        /// <param name="id">Match id</param>
+        /// <param name="matchDto">Updated match data</param>
+        /// <returns>No content</returns>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<MatchDto>> Update(Guid id, [FromBody] MatchDto matchDto)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateMatch(int id, [FromBody] UpdateMatchDto matchDto)
         {
             if (id != matchDto.Id)
                 return BadRequest();
 
-            var result = await _matchService.UpdateAsync(matchDto);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
-            return Ok(matchDto);
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var result = await _matchService.DeleteByIdAsync(id);
-            if (!result.Success)
-                return BadRequest(result.Message);
-
+            await _matchService.UpdateMatchAsync(matchDto);
             return NoContent();
         }
 
-        [HttpGet("{id}/events")]
-        public async Task<ActionResult<IEnumerable<MatchEventDto>>> GetMatchEvents(Guid id)
+        /// <summary>
+        /// Deletes a match
+        /// </summary>
+        /// <param name="id">Match id</param>
+        /// <returns>No content</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteMatch(int id)
         {
-            var events = await _matchService.GetMatchEventsAsync(id);
-            return Ok(events);
-        }
-
-
-
-        [HttpGet("upcoming")]
-        public async Task<ActionResult<IEnumerable<MatchDto>>> GetUpcomingMatches()
-        {
-            var matches = await _matchService.GetUpcomingMatchesAsync();
-            return Ok(matches);
-        }
-
-        [HttpGet("live")]
-        public async Task<ActionResult<IEnumerable<MatchDto>>> GetLiveMatches()
-        {
-            var matches = await _matchService.GetLiveMatchesAsync();
-            return Ok(matches);
-        }
-
-      
-
-        [HttpPut("{id}/status")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] string status)
-        {
-            var result = await _matchService.UpdateMatchStatusAsync(id, status);
-            if (!result)
-                return BadRequest("Failed to update match status");
-
+            await _matchService.DeleteMatchAsync(id);
             return NoContent();
         }
     }
