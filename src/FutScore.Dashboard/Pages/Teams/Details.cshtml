@@ -1,0 +1,57 @@
+@page "{id:int}"
+@model FutScore.Dashboard.Pages.Teams.DetailsModel
+@{
+    ViewData["Title"] = "Takım Detayları";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Index">Takımlar</a></li>
+        <li class="breadcrumb-item active">Takım Detayları</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-info-circle me-1"></i>
+            Takım Bilgileri
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-2">Takım Adı</dt>
+                <dd class="col-sm-10">@Model.Team.Name</dd>
+
+                <dt class="col-sm-2">Lig</dt>
+                <dd class="col-sm-10">@(Model.Team.League?.Name ?? "Belirtilmemiş")</dd>
+
+                <dt class="col-sm-2">Stadyum</dt>
+                <dd class="col-sm-10">@(Model.Team.Stadium?.Name ?? "Belirtilmemiş")</dd>
+
+                <dt class="col-sm-2">Şehir</dt>
+                <dd class="col-sm-10">@Model.Team.City</dd>
+
+                <dt class="col-sm-2">Logo</dt>
+                <dd class="col-sm-10">
+                    @if (!string.IsNullOrEmpty(Model.Team.LogoUrl))
+                    {
+                        <img src="@Model.Team.LogoUrl" alt="@Model.Team.Name Logo" style="max-height: 100px;" />
+                    }
+                    else
+                    {
+                        <span>Logo yok</span>
+                    }
+                </dd>
+            </dl>
+
+            <div class="mt-3">
+                <a asp-page="./Edit" asp-route-id="@Model.Team.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Düzenle
+                </a>
+                <a asp-page="./Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Listeye Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div> 

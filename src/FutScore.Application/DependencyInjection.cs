@@ -10,16 +10,17 @@ namespace FutScore.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            // AutoMapper
-            services.AddAutoMapper(typeof(DependencyInjection).Assembly);
+            var assembly = Assembly.GetExecutingAssembly();
+            services.AddAutoMapper(assembly);
 
-            // Services
-            services.AddScoped<ILeagueService, LeagueService>();
-            services.AddScoped<ISeasonService, SeasonService>();
-            services.AddScoped<ITeamService, TeamService>();
-            services.AddScoped<IMatchService, MatchService>();
-            services.AddScoped<IPlayerService, PlayerService>();
-            services.AddScoped<IStadiumService, StadiumService>();
+
+
+            services.Scan(scan => scan
+             .FromAssemblies(typeof(IBaseService).Assembly) // Buraya hedef assembly'yi ekle
+             .AddClasses()
+             .AsImplementedInterfaces()
+             .WithScopedLifetime());
+
 
             return services;
         }

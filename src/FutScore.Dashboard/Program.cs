@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using FutScore.Infrastructure;
 using FutScore.Application;
+using FutScore.Application.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,21 +55,37 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 errorNumbersToAdd: null);
         }));
 
-// Add Cookie Authentication
+// JWT Configuration
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+
+// Authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddCookie(options =>
 {
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-    options.AccessDeniedPath = "/Error";
-    options.Cookie.Name = "FutScore.Auth";
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromHours(24);
+    options.LoginPath = "/login";
+    options.LogoutPath = "/logout";
+    options.AccessDeniedPath = "/access-denied";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+    };
 });
 
 // Add Application Layer
@@ -90,16 +107,13 @@ builder.Services.AddScoped<ISeasonService, SeasonService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 
-
-
 // Add Authorization
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy =>
-        policy.Requirements.Add(new AdminRequirement()));
+    options.AddPolicy("RequireAuthenticatedUser", policy =>
+        policy.RequireAuthenticatedUser());
 });
 
-//builder.Services.AddScoped<IAuthorizationHandler, AdminAuthorizationHandler>();
 builder.Services.AddScoped<ProcessResult>();
 builder.Services.AddHttpContextAccessor();
 
@@ -122,6 +136,21 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Global authorization filter
+app.Use(async (context, next) =>
+{
+    if (!context.User.Identity.IsAuthenticated &&
+        !context.Request.Path.StartsWithSegments("/login") &&
+        !context.Request.Path.StartsWithSegments("/_framework") &&
+        !context.Request.Path.StartsWithSegments("/_content"))
+    {
+        context.Response.Redirect("/login");
+        return;
+    }
+
+    await next();
+});
 
 app.MapRazorPages();
 

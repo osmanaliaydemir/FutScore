@@ -14,6 +14,7 @@ namespace FutScore.Application.DTOs.Stadium
     public class StadiumDto : BaseDto
     {
 
+        public int Id { get; set; }
         public required string Name { get; set; }
         public required string City { get; set; }
         public required int Capacity { get; set; }

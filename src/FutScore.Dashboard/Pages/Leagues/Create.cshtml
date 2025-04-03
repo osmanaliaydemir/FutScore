@@ -1,0 +1,51 @@
+@page
+@model FutScore.Dashboard.Pages.Leagues.CreateModel
+@{
+    ViewData["Title"] = "Yeni Lig";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Index">Ligler</a></li>
+        <li class="breadcrumb-item active">Yeni Lig</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-plus me-1"></i>
+            Yeni Lig Ekle
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="League.Name" class="form-label">Lig Adı</label>
+                    <input asp-for="League.Name" class="form-control" />
+                    <span asp-validation-for="League.Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="League.Country" class="form-label">Ülke</label>
+                    <input asp-for="League.Country" class="form-control" />
+                    <span asp-validation-for="League.Country" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="League.Level" class="form-label">Seviye</label>
+                    <input asp-for="League.Level" class="form-control" type="number" min="1" />
+                    <span asp-validation-for="League.Level" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <a asp-page="./Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

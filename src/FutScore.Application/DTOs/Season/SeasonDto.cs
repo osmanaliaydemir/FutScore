@@ -1,3 +1,6 @@
+using FutScore.Application.DTOs.League;
+using FutScore.Application.DTOs.Match;
+
 namespace FutScore.Application.DTOs.Season
 {
     public class SeasonDto : BaseDto
@@ -7,5 +10,7 @@ namespace FutScore.Application.DTOs.Season
         public string SeasonName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public LeagueDto League { get; set; }
+
     }
 } 

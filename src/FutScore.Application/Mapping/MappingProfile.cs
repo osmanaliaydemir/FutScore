@@ -5,6 +5,7 @@ using FutScore.Application.DTOs.Match;
 using FutScore.Application.DTOs.Season;
 using FutScore.Application.DTOs.Stadium;
 using FutScore.Application.DTOs.Team;
+using FutScore.Application.DTOs.User;
 using FutScore.Domain.Entities;
 
 namespace FutScore.Application.Mapping
@@ -46,6 +47,15 @@ namespace FutScore.Application.Mapping
                 .ForMember(dest => dest.Teams, opt => opt.Ignore())
                 .ForMember(dest => dest.Matches, opt => opt.Ignore());
             CreateMap<Stadium, StadiumDto>();
+
+            // User mappings
+            CreateMap<User, UserDto>();
+            CreateMap<RegisterDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.RefreshTokens, opt => opt.Ignore());
+            CreateMap<UpdateUserDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.RefreshTokens, opt => opt.Ignore());
         }
     }
 } 

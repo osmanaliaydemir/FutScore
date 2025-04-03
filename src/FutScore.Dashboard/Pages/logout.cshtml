@@ -1,0 +1,30 @@
+@page
+@model FutScore.Dashboard.Pages.LogoutModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Çıkış Yapılıyor...</title>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px;">
+        <h3>Çıkış yapılıyor, lütfen bekleyin...</h3>
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Yükleniyor...</span>
+        </div>
+    </div>
+
+    <script>
+        // Sayfa yüklendiğinde otomatik olarak çıkış işlemini başlat
+        document.addEventListener('DOMContentLoaded', function () {
+            window.location.href = '/login';
+        });
+    </script>
+</body>
+</html> 

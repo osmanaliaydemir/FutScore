@@ -1,0 +1,59 @@
+@page "{id:int}"
+@model FutScore.Dashboard.Pages.Users.EditModel
+@{
+    ViewData["Title"] = "Kullanıcı Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Kullanıcı Düzenle</h3>
+        </div>
+        <form method="post">
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="User.Id" />
+
+                <div class="form-group">
+                    <label asp-for="User.Email">E-posta</label>
+                    <input asp-for="User.Email" class="form-control" type="email" />
+                    <span asp-validation-for="User.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="User.FirstName">Ad</label>
+                    <input asp-for="User.FirstName" class="form-control" />
+                    <span asp-validation-for="User.FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="User.LastName">Soyad</label>
+                    <input asp-for="User.LastName" class="form-control" />
+                    <span asp-validation-for="User.LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="User.PhoneNumber">Telefon</label>
+                    <input asp-for="User.PhoneNumber" class="form-control" />
+                    <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="User.Role">Rol</label>
+                    <select asp-for="User.Role" class="form-control" asp-items="Html.GetEnumSelectList<FutScore.Domain.Entities.UserRole>()">
+                        <option value="">-- Rol Seçin --</option>
+                    </select>
+                    <span asp-validation-for="User.Role" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-page="./Index" class="btn btn-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

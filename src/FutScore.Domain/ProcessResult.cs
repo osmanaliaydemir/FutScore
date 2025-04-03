@@ -21,4 +21,9 @@ namespace FutScore.Domain
         public List<ValidationResult> ValidationResults { get; set; }
         public dynamic Output { get; set; }
     }
+
+    public class ProcessResult<T> : ProcessResult
+    {
+        public T Data { get; set; }
+    }
 }

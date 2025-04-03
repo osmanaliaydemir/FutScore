@@ -1,0 +1,59 @@
+@page
+@model FutScore.Dashboard.Pages.Seasons.CreateModel
+@{
+    ViewData["Title"] = "Yeni Sezon";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Index">Sezonlar</a></li>
+        <li class="breadcrumb-item active">Yeni Sezon</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-plus me-1"></i>
+            Yeni Sezon Ekle
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="Season.LeagueId" class="form-label">Lig</label>
+                    <select asp-for="Season.LeagueId" class="form-select" asp-items="Model.Leagues">
+                        <option value="">Lig Seçiniz</option>
+                    </select>
+                    <span asp-validation-for="Season.LeagueId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Season.SeasonName" class="form-label">Sezon Adı</label>
+                    <input asp-for="Season.SeasonName" class="form-control" />
+                    <span asp-validation-for="Season.SeasonName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Season.StartDate" class="form-label">Başlangıç Tarihi</label>
+                    <input asp-for="Season.StartDate" class="form-control" type="date" />
+                    <span asp-validation-for="Season.StartDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Season.EndDate" class="form-label">Bitiş Tarihi</label>
+                    <input asp-for="Season.EndDate" class="form-control" type="date" />
+                    <span asp-validation-for="Season.EndDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <a asp-page="./Index" class="btn btn-secondary">İptal</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

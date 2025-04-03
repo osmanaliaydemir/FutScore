@@ -4,6 +4,7 @@ using FutScore.Application.Interfaces;
 using FutScore.Domain;
 using FutScore.Domain.Entities;
 using FutScore.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,8 +23,14 @@ namespace FutScore.Application.Services
 
         public async Task<IEnumerable<TeamDto>> GetAllTeamsAsync()
         {
-            var teams = await _teamRepository.GetAllAsync();
+            var teams = await _teamRepository.GetAllWithRelationsAsync();
             return _mapper.Map<IEnumerable<TeamDto>>(teams);
+        }
+
+        public async Task<TeamDto> GetTeamByIdAsync(int id)
+        {
+            var team = await _teamRepository.GetByIdAsync(id);
+            return _mapper.Map<TeamDto>(team);
         }
 
         public async Task<ProcessResult> CreateTeamAsync(CreateTeamDto teamDto)
@@ -34,18 +41,8 @@ namespace FutScore.Application.Services
 
         public async Task<ProcessResult> UpdateTeamAsync(UpdateTeamDto teamDto)
         {
-            var existingTeam = await _teamRepository.GetByIdAsync(teamDto.Id);
-            if (existingTeam == null)
-            {
-                return new ProcessResult
-                {
-                    Success = false,
-                    Message = "Takým bulunamadý."
-                };
-            }
-
-            _mapper.Map(teamDto, existingTeam);
-            return await _teamRepository.UpdateAsync(existingTeam);
+            var team = _mapper.Map<Team>(teamDto);
+            return await _teamRepository.UpdateAsync(team);
         }
 
         public async Task<ProcessResult> DeleteTeamAsync(int teamId)
@@ -56,7 +53,7 @@ namespace FutScore.Application.Services
                 return new ProcessResult
                 {
                     Success = false,
-                    Message = "Takým bulunamadý."
+                    Message = "TakÄ±m bulunamadÄ±."
                 };
             }
 

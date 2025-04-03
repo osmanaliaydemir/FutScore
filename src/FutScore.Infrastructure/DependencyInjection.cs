@@ -33,6 +33,7 @@ namespace FutScore.Infrastructure
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ISeasonRepository, SeasonRepository>();
             services.AddScoped<IStadiumRepository, StadiumRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }

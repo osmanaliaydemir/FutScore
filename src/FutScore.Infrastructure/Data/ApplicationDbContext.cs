@@ -19,6 +19,8 @@ namespace FutScore.Infrastructure.Data
         public DbSet<League> Leagues { get; set; }
         public DbSet<Season> Seasons { get; set; }
         public DbSet<Stadium> Stadiums { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -145,6 +147,21 @@ namespace FutScore.Infrastructure.Data
                     modelBuilder.Entity(entityType.ClrType).HasQueryFilter(condition);
                 }
             }
+
+            // User configurations
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(e => e.Username).IsUnique();
+                entity.HasIndex(e => e.Email).IsUnique();
+            });
+
+            modelBuilder.Entity<UserRefreshToken>(entity =>
+            {
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.RefreshTokens)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

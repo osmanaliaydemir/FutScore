@@ -4,9 +4,11 @@ using FutScore.Application.Interfaces;
 using FutScore.Application.DTOs.Season;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FutScore.Dashboard.Pages.Seasons
 {
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly ISeasonService _seasonService;
@@ -16,8 +18,11 @@ namespace FutScore.Dashboard.Pages.Seasons
             _seasonService = seasonService;
         }
 
-        public void OnGet()
+        public IEnumerable<SeasonDto> Seasons { get; set; } = new List<SeasonDto>();
+
+        public async Task OnGetAsync()
         {
+            Seasons = await _seasonService.GetAllSeasonsAsync();
         }
 
         public async Task<IActionResult> OnGetSeasonsAsync()

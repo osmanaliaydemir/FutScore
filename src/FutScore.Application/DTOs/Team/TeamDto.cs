@@ -10,6 +10,7 @@ namespace FutScore.Application.DTOs.Team
 {
     public class TeamDto : BaseDto
     {
+        public int Id { get; set; }
         public required string Name { get; set; }
         public required int LeagueId { get; set; }
         public required int StadiumId { get; set; }

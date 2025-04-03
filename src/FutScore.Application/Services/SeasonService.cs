@@ -22,7 +22,7 @@ namespace FutScore.Application.Services
 
         public async Task<IEnumerable<SeasonDto>> GetAllSeasonsAsync()
         {
-            var seasons = await _seasonRepository.GetAllAsync();
+            var seasons = await _seasonRepository.GetAllWithLeaguesAsync();
             return _mapper.Map<IEnumerable<SeasonDto>>(seasons);
         }
 
@@ -40,7 +40,7 @@ namespace FutScore.Application.Services
                 return new ProcessResult
                 {
                     Success = false,
-                    Message = "Sezon bulunamadý."
+                    Message = "Sezon bulunamadï¿½."
                 };
             }
 
@@ -56,7 +56,7 @@ namespace FutScore.Application.Services
                 return new ProcessResult
                 {
                     Success = false,
-                    Message = "Sezon bulunamadý."
+                    Message = "Sezon bulunamadï¿½."
                 };
             }
 

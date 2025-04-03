@@ -20,7 +20,7 @@ namespace FutScore.Domain.Entities
         public int StadiumId { get; set; }
 
         [StringLength(200)]
-        public string LogoUrl { get; set; }
+        public string? LogoUrl { get; set; }
 
         [Required]
         [StringLength(100)]

@@ -16,6 +16,7 @@ namespace FutScore.Application.DTOs.Stadium
         public required string Name { get; set; }
         public required string City { get; set; }
         public required int Capacity { get; set; }
+        public required DateTime OpeningDate { get; set; }
         public string? ImageUrl { get; set; }
     }
 }

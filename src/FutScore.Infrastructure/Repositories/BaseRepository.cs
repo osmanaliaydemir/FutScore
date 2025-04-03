@@ -1,5 +1,6 @@
 ﻿using FutScore.Domain.Interfaces;
 using FutScore.Domain;
+using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,10 @@ namespace FutScore.Infrastructure.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        protected readonly DbContext _context;
+        protected readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public BaseRepository(DbContext context)
+        public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
@@ -140,5 +141,4 @@ namespace FutScore.Infrastructure.Repositories
             return processResult;
         }
     }
-
 }
