@@ -3,6 +3,7 @@ using FutScore.Domain.Entities;
 using FutScore.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace FutScore.Infrastructure.Data
 {
@@ -17,12 +18,84 @@ namespace FutScore.Infrastructure.Data
         public DbSet<Player> Players { get; set; }
         public DbSet<League> Leagues { get; set; }
         public DbSet<Season> Seasons { get; set; }
-        public DbSet<SeasonTeam> SeasonTeams { get; set; }
         public DbSet<Stadium> Stadiums { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Apply all configurations from the assembly
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            // Configure relationships
+            modelBuilder.Entity<League>()
+                .HasMany(l => l.Seasons)
+                .WithOne(s => s.League)
+                .HasForeignKey(s => s.LeagueId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<League>()
+                .HasMany(l => l.Teams)
+                .WithOne(t => t.League)
+                .HasForeignKey(t => t.LeagueId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Season>()
+                .HasMany(s => s.Matches)
+                .WithOne(m => m.Season)
+                .HasForeignKey(m => m.SeasonId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Team>()
+                .HasMany(t => t.HomeMatches)
+                .WithOne(m => m.HomeTeam)
+                .HasForeignKey(m => m.HomeTeamId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Team>()
+                .HasMany(t => t.AwayMatches)
+                .WithOne(m => m.AwayTeam)
+                .HasForeignKey(m => m.AwayTeamId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Team>()
+                .HasMany(t => t.Players)
+                .WithOne(p => p.Team)
+                .HasForeignKey(p => p.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Stadium>()
+                .HasMany(s => s.Teams)
+                .WithOne(t => t.Stadium)
+                .HasForeignKey(t => t.StadiumId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Stadium>()
+                .HasMany(s => s.Matches)
+                .WithOne(m => m.Stadium)
+                .HasForeignKey(m => m.StadiumId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure indexes
+            modelBuilder.Entity<League>()
+                .HasIndex(l => l.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<Season>()
+                .HasIndex(s => new { s.LeagueId, s.SeasonName })
+                .IsUnique();
+
+            modelBuilder.Entity<Team>()
+                .HasIndex(t => new { t.LeagueId, t.Name })
+                .IsUnique();
+
+            modelBuilder.Entity<Player>()
+                .HasIndex(p => new { p.TeamId, p.JerseyNumber })
+                .IsUnique();
+
+            modelBuilder.Entity<Stadium>()
+                .HasIndex(s => new { s.Name, s.City })
+                .IsUnique();
 
             // Configure all relationships to use Restrict delete behavior
             foreach (var relationship in modelBuilder.Model.GetEntityTypes()
@@ -30,22 +103,6 @@ namespace FutScore.Infrastructure.Data
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
-
-            // Configure composite keys
-            modelBuilder.Entity<SeasonTeam>()
-                .HasKey(st => new { st.SeasonId, st.TeamId });
-
-            // Configure League relationships
-            modelBuilder.Entity<League>()
-                .HasIndex(l => l.Name)
-                .IsUnique();
-
-            // Configure Season relationships
-            modelBuilder.Entity<Season>()
-                .HasOne(s => s.League)
-                .WithMany(l => l.Seasons)
-                .HasForeignKey(s => s.LeagueId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // Configure Match relationships and Value Objects
             modelBuilder.Entity<Match>(entity =>
@@ -64,27 +121,6 @@ namespace FutScore.Infrastructure.Data
                     time.Property(t => t.StartTime).HasColumnName("StartTime");
                     time.Property(t => t.EndTime).HasColumnName("EndTime");
                 });
-
-                // Configure relationships
-                entity.HasOne(m => m.Season)
-                    .WithMany(s => s.Matches)
-                    .HasForeignKey(m => m.SeasonId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(m => m.HomeTeam)
-                    .WithMany()
-                    .HasForeignKey(m => m.HomeTeamId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(m => m.AwayTeam)
-                    .WithMany()
-                    .HasForeignKey(m => m.AwayTeamId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(m => m.Stadium)
-                    .WithMany(s => s.Matches)
-                    .HasForeignKey(m => m.StadiumId)
-                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Configure Team relationships
@@ -92,33 +128,10 @@ namespace FutScore.Infrastructure.Data
                 .HasIndex(t => t.Name)
                 .IsUnique();
 
-            // Configure Player relationships
-            modelBuilder.Entity<Player>()
-                .HasOne(p => p.Team)
-                .WithMany(t => t.Players)
-                .HasForeignKey(p => p.TeamId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // Configure Stadium relationships
             modelBuilder.Entity<Stadium>()
                 .HasIndex(s => s.Name)
                 .IsUnique();
-
-            // Configure SeasonTeam relationships
-            modelBuilder.Entity<SeasonTeam>()
-                .HasOne(st => st.Season)
-                .WithMany(s => s.SeasonTeams)
-                .HasForeignKey(st => st.SeasonId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<SeasonTeam>()
-                .HasOne(st => st.Team)
-                .WithMany(t => t.SeasonTeams)
-                .HasForeignKey(st => st.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Apply configurations
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
             // Global query filter for soft delete
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

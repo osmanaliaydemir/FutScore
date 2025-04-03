@@ -16,12 +16,6 @@ namespace FutScore.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasMaxLength(100);
 
-            // Relationships
-            builder.HasMany(t => t.SeasonTeams)
-                .WithOne(st => st.Team)
-                .HasForeignKey(st => st.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasMany(t => t.HomeMatches)
                 .WithOne(m => m.HomeTeam)
                 .HasForeignKey(m => m.HomeTeamId)

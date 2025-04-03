@@ -4,6 +4,7 @@ using FutScore.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FutScore.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403165203_UpdateDB")]
+    partial class UpdateDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,9 +169,7 @@ namespace FutScore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TeamId", "JerseyNumber")
-                        .IsUnique()
-                        .HasFilter("[JerseyNumber] IS NOT NULL");
+                    b.HasIndex("TeamId");
 
                     b.ToTable("Players", (string)null);
                 });
@@ -218,8 +219,7 @@ namespace FutScore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LeagueId", "SeasonName")
-                        .IsUnique();
+                    b.HasIndex("LeagueId");
 
                     b.ToTable("Seasons", (string)null);
                 });
@@ -270,9 +270,6 @@ namespace FutScore.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("Name", "City")
                         .IsUnique();
 
                     b.ToTable("Stadiums");
@@ -327,13 +324,12 @@ namespace FutScore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LeagueId");
+
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.HasIndex("StadiumId");
-
-                    b.HasIndex("LeagueId", "Name")
-                        .IsUnique();
 
                     b.ToTable("Teams", (string)null);
                 });
@@ -343,19 +339,19 @@ namespace FutScore.Infrastructure.Migrations
                     b.HasOne("FutScore.Domain.Entities.Team", "AwayTeam")
                         .WithMany("AwayMatches")
                         .HasForeignKey("AwayTeamId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("FutScore.Domain.Entities.Team", "HomeTeam")
                         .WithMany("HomeMatches")
                         .HasForeignKey("HomeTeamId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FutScore.Domain.Entities.Season", "Season")
                         .WithMany("Matches")
                         .HasForeignKey("SeasonId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FutScore.Domain.Entities.Stadium", "Stadium")
@@ -430,7 +426,7 @@ namespace FutScore.Infrastructure.Migrations
                     b.HasOne("FutScore.Domain.Entities.Team", "Team")
                         .WithMany("Players")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Team");
@@ -441,7 +437,7 @@ namespace FutScore.Infrastructure.Migrations
                     b.HasOne("FutScore.Domain.Entities.League", "League")
                         .WithMany("Seasons")
                         .HasForeignKey("LeagueId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("League");
@@ -450,13 +446,13 @@ namespace FutScore.Infrastructure.Migrations
             modelBuilder.Entity("FutScore.Domain.Entities.Team", b =>
                 {
                     b.HasOne("FutScore.Domain.Entities.League", "League")
-                        .WithMany("Teams")
+                        .WithMany()
                         .HasForeignKey("LeagueId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FutScore.Domain.Entities.Stadium", "Stadium")
-                        .WithMany("Teams")
+                        .WithMany()
                         .HasForeignKey("StadiumId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -469,8 +465,6 @@ namespace FutScore.Infrastructure.Migrations
             modelBuilder.Entity("FutScore.Domain.Entities.League", b =>
                 {
                     b.Navigation("Seasons");
-
-                    b.Navigation("Teams");
                 });
 
             modelBuilder.Entity("FutScore.Domain.Entities.Season", b =>
@@ -481,8 +475,6 @@ namespace FutScore.Infrastructure.Migrations
             modelBuilder.Entity("FutScore.Domain.Entities.Stadium", b =>
                 {
                     b.Navigation("Matches");
-
-                    b.Navigation("Teams");
                 });
 
             modelBuilder.Entity("FutScore.Domain.Entities.Team", b =>

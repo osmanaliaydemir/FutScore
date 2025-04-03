@@ -17,6 +17,8 @@ namespace FutScore.Domain.Entities
         public int LeagueId { get; set; }
 
         [Required]
+        public int StadiumId { get; set; }
+
         [StringLength(200)]
         public string LogoUrl { get; set; }
 
@@ -24,24 +26,18 @@ namespace FutScore.Domain.Entities
         [StringLength(100)]
         public string City { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string Stadium { get; set; }
-
-        [Required]
-        public int Founded { get; set; }
 
         // Navigation Properties
         [ForeignKey(nameof(LeagueId))]
         public virtual League League { get; set; }
-        public virtual ICollection<SeasonTeam> SeasonTeams { get; set; }
+        [ForeignKey(nameof(StadiumId))]
+        public virtual Stadium Stadium { get; set; }
         public virtual ICollection<Match> HomeMatches { get; set; }
         public virtual ICollection<Match> AwayMatches { get; set; }
         public virtual ICollection<Player> Players { get; set; }
 
         public Team()
         {
-            SeasonTeams = new HashSet<SeasonTeam>();
             HomeMatches = new HashSet<Match>();
             AwayMatches = new HashSet<Match>();
             Players = new HashSet<Player>();

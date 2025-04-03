@@ -2,8 +2,10 @@ namespace FutScore.Application.DTOs.Team
 {
     public class CreateTeamDto
     {
-        public string Name { get; set; }
-        public string LogoUrl { get; set; }
-        public string Country { get; set; }
+        public required string Name { get; set; }
+        public required int LeagueId { get; set; }
+        public required int StadiumId { get; set; }
+        public string? LogoUrl { get; set; }
+        public required string City { get; set; }
     }
 } 

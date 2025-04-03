@@ -19,5 +19,6 @@ namespace FutScore.Domain.Entities
 
         // Navigation Properties
         public virtual ICollection<Season> Seasons { get; set; }
+        public virtual ICollection<Team> Teams { get; set; }
     }
 } 

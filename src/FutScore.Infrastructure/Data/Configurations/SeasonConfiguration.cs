@@ -28,11 +28,6 @@ namespace FutScore.Infrastructure.Data.Configurations
                 .HasForeignKey(s => s.LeagueId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(s => s.SeasonTeams)
-                .WithOne(st => st.Season)
-                .HasForeignKey(st => st.SeasonId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasMany(s => s.Matches)
                 .WithOne(m => m.Season)
                 .HasForeignKey(m => m.SeasonId)

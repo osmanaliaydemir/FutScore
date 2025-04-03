@@ -1,7 +1,10 @@
 using AutoMapper;
 using FutScore.Application.DTOs;
 using FutScore.Application.DTOs.League;
+using FutScore.Application.DTOs.Match;
 using FutScore.Application.DTOs.Season;
+using FutScore.Application.DTOs.Stadium;
+using FutScore.Application.DTOs.Team;
 using FutScore.Domain.Entities;
 
 namespace FutScore.Application.Mapping
@@ -21,24 +24,28 @@ namespace FutScore.Application.Mapping
             CreateMap<Season, SeasonDto>().ReverseMap();
 
             // Team Mappings
-            //CreateMap<CreateTeamDto, Team>();
-            //CreateMap<UpdateTeamDto, Team>();
-            //CreateMap<Team, TeamDto>();
+            CreateMap<CreateTeamDto, Team>();
+            CreateMap<UpdateTeamDto, Team>();
+            CreateMap<Team, TeamDto>();
 
-            //// Match Mappings
-            //CreateMap<CreateMatchDto, Match>();
-            //CreateMap<UpdateMatchDto, Match>();
-            //CreateMap<Match, MatchDto>();
+            // Match Mappings
+            CreateMap<CreateMatchDto, Match>();
+            CreateMap<UpdateMatchDto, Match>();
+            CreateMap<Match, MatchDto>();
 
-            //// Player Mappings
+            // Player Mappings
             //CreateMap<CreatePlayerDto, Player>();
             //CreateMap<UpdatePlayerDto, Player>();
             //CreateMap<Player, PlayerDto>();
 
-            //// Stadium Mappings
-            //CreateMap<CreateStadiumDto, Stadium>();
-            //CreateMap<UpdateStadiumDto, Stadium>();
-            //CreateMap<Stadium, StadiumDto>();
+            // Stadium Mappings
+            CreateMap<CreateStadiumDto, Stadium>()
+                .ForMember(dest => dest.Teams, opt => opt.Ignore())
+                .ForMember(dest => dest.Matches, opt => opt.Ignore());
+            CreateMap<UpdateStadiumDto, Stadium>()
+                .ForMember(dest => dest.Teams, opt => opt.Ignore())
+                .ForMember(dest => dest.Matches, opt => opt.Ignore());
+            CreateMap<Stadium, StadiumDto>();
         }
     }
 } 

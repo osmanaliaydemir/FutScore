@@ -44,19 +44,19 @@ namespace FutScore.WebApi.Controllers
 
         // POST: api/stadium
         [HttpPost]
-        public async Task<ActionResult<ProcessResult>> AddStadium([FromBody] StadiumDto stadiumDto)
+        public async Task<ActionResult<ProcessResult>> AddStadium([FromBody] CreateStadiumDto stadiumDto)
         {
             var result = await _stadiumService.AddStadiumAsync(stadiumDto);
             if (result.Success)
             {
-                return CreatedAtAction(nameof(GetStadiumById), new { id = stadiumDto.Id }, result);
+                return CreatedAtAction(nameof(GetStadiumById), new { id = result.EntityId }, result);
             }
             return BadRequest(result.Message);
         }
 
         // PUT: api/stadium/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProcessResult>> UpdateStadium(int id, [FromBody] StadiumDto stadiumDto)
+        public async Task<ActionResult<ProcessResult>> UpdateStadium(int id, [FromBody] UpdateStadiumDto stadiumDto)
         {
             if (id != stadiumDto.Id)
             {

@@ -18,14 +18,14 @@ namespace FutScore.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ProcessResult> AddStadiumAsync(StadiumDto stadiumDto)
+        public async Task<ProcessResult> AddStadiumAsync(CreateStadiumDto stadiumDto)
         {
             var stadium = _mapper.Map<Stadium>(stadiumDto);
             var result = await _stadiumRepository.AddAsync(stadium);
             return result;
         }
 
-        public async Task<ProcessResult> UpdateStadiumAsync(StadiumDto stadiumDto)
+        public async Task<ProcessResult> UpdateStadiumAsync(UpdateStadiumDto stadiumDto)
         {
             var existingStadium = await _stadiumRepository.GetByIdAsync(stadiumDto.Id);
             if (existingStadium == null)

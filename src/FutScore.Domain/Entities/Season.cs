@@ -36,12 +36,10 @@ namespace FutScore.Domain.Entities
         // Navigation Properties
         [ForeignKey(nameof(LeagueId))]
         public virtual League League { get; set; }
-        public virtual ICollection<SeasonTeam> SeasonTeams { get; set; }
         public virtual ICollection<Match> Matches { get; set; }
 
         public Season()
         {
-            SeasonTeams = new HashSet<SeasonTeam>();
             Matches = new HashSet<Match>();
             Status = SeasonStatus.Upcoming;
         }
