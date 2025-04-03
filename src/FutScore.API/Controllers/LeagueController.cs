@@ -27,7 +27,7 @@ namespace FutScore.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateLeague([FromBody] LeagueDto leagueDto)
+        public async Task<IActionResult> CreateLeague([FromBody] CreateLeagueDto leagueDto)
         {
             var result = await _leagueService.CreateLeagueAsync(leagueDto);
             if (!result.Success)
@@ -37,7 +37,7 @@ namespace FutScore.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateLeague([FromBody] LeagueDto leagueDto)
+        public async Task<IActionResult> UpdateLeague([FromBody] UpdateLeagueDto leagueDto)
         {
             var result = await _leagueService.UpdateLeagueAsync(leagueDto);
             if (!result.Success)

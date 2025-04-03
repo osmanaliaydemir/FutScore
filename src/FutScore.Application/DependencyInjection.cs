@@ -1,20 +1,19 @@
 ﻿using FutScore.Application.Interfaces;
-using FutScore.Application.Mapping;
-using FutScore.Application.Services.JwtService;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using FutScore.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
+using System.Reflection;
 
 namespace FutScore.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            
-            services.AddScoped<IJwtService, JwtService>();
+            // AutoMapper
+            services.AddAutoMapper(typeof(DependencyInjection).Assembly);
 
-            // Application Services
+            // Services
             services.AddScoped<ILeagueService, LeagueService>();
             services.AddScoped<ISeasonService, SeasonService>();
             services.AddScoped<ITeamService, TeamService>();

@@ -9,8 +9,8 @@ namespace FutScore.Application.Interfaces
     public interface ILeagueService
     {
         Task<IEnumerable<LeagueDto>> GetAllLeaguesAsync();
-        Task<ProcessResult> CreateLeagueAsync(LeagueDto leagueDto);
-        Task<ProcessResult> UpdateLeagueAsync(LeagueDto leagueDto);
+        Task<ProcessResult> CreateLeagueAsync(CreateLeagueDto leagueDto);
+        Task<ProcessResult> UpdateLeagueAsync(UpdateLeagueDto leagueDto);
         Task<ProcessResult> DeleteLeagueAsync(int leagueId);
     }
 }

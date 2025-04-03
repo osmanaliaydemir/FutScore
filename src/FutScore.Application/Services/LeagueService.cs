@@ -26,13 +26,13 @@ namespace FutScore.Application.Services
             return _mapper.Map<IEnumerable<LeagueDto>>(leagues);
         }
 
-        public async Task<ProcessResult> CreateLeagueAsync(LeagueDto leagueDto)
+        public async Task<ProcessResult> CreateLeagueAsync(CreateLeagueDto leagueDto)
         {
             var league = _mapper.Map<League>(leagueDto);
             return await _leagueRepository.AddAsync(league);
         }
 
-        public async Task<ProcessResult> UpdateLeagueAsync(LeagueDto leagueDto)
+        public async Task<ProcessResult> UpdateLeagueAsync(UpdateLeagueDto leagueDto)
         {
             var existingLeague = await _leagueRepository.GetByIdAsync(leagueDto.Id);
             if (existingLeague == null)

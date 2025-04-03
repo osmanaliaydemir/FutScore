@@ -1,6 +1,6 @@
 namespace FutScore.Application.DTOs.League
 {
-    public class LeagueDto: BaseDto
+    public class UpdateLeagueDto
     {
         public int Id { get; set; }
         public required string Name { get; set; }
