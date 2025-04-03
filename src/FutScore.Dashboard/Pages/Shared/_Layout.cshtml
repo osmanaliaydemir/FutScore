@@ -1,177 +1,139 @@
 ﻿<!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="csrf-token" content="@Html.AntiForgeryToken()" />
-    <title>@ViewData["Title"] - FutScore</title>
+    <title>@ViewData["Title"] - AdminWebCore</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
-    <link rel="stylesheet" href="~/lib/datatables/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" href="~/lib/datatables-bs5/css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="~/lib/datatables-buttons/css/buttons.bootstrap5.min.css" />
-    <link rel="stylesheet" href="~/lib/sweetalert2/sweetalert2.min.css" />
-    <link rel="stylesheet" href="~/lib/simplebar/simplebar.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    @await RenderSectionAsync("Styles", required: false)
+    <environment include="Development">
+        <!-- VENDOR CSS -->
+        <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+        <!-- Icons-->
+        <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+        <link href="~/lib/coreui/icons/css/coreui-icons.css" rel="stylesheet" />
+        <link href="~/lib/flag-icon-css/css/flag-icon.css" rel="stylesheet" />
+        <link href="~/lib/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" />
+        <link href="~/lib/pace-progress/css/pace.css" rel="stylesheet" />
+        <!-- MAIN CSS -->
+        <link href="~/lib/coreui/css/style.css" rel="stylesheet" />
+
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <!-- VENDOR CSS -->
+        <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="~/lib/coreui/icons/css/coreui-icons.min.css" rel="stylesheet" />
+        <link href="~/lib/flag-icon-css/css/flag-icon.css" rel="stylesheet" />
+        <link href="~/lib/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" />
+        <link href="~/lib/pace-progress/css/pace.css" rel="stylesheet" />
+        <!-- MAIN CSS -->
+        <link href="~/lib/coreui/css/style.min.css" rel="stylesheet" />
+
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+
+    @RenderSection("Headers", required: false)
+
+    <!-- ICONS -->
+    <link rel="icon" type="image/x-icon" sizes="96x96" href="/favicon.ico">
 </head>
-<body>
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <nav class="sidebar" data-simplebar>
-            <div class="sidebar-header">
-                <a href="/" class="sidebar-brand">
-                    <i class="fas fa-futbol"></i>
-                    <span>FutScore</span>
-                </a>
-                <button type="button" class="btn p-0 d-lg-none" id="sidebarToggle">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
 
-            <ul class="sidebar-nav">
-                <li class="sidebar-item">
-                    <a asp-page="/Index" class="sidebar-link @(ViewContext.RouteData.Values["Page"]?.ToString() == "/Index" ? "active" : "")">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
+<!-- BODY -->
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+
+    @*<partial name="_CookieConsentPartial" />*@
+
+    <!-- NAVBAR -->
+    <partial name="_NavBar" />
+    <!-- END NAVBAR -->
+
+    <div class="app-body">
+
+        <!-- LEFT SIDEBAR -->
+        <partial name="_SideBar" />
+        <!-- END LEFT SIDEBAR -->
+        <!-- MAIN CONTENT -->
+
+        <main class="main">
+
+            <!-- Breadcrumb-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item">
+                    <a href="#">Admin</a>
                 </li>
-
-                <li class="sidebar-header">Yönetim</li>
-
-                <li class="sidebar-item">
-                    <a asp-page="/Leagues/Index" class="sidebar-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.StartsWith("/Leagues") == true ? "active" : "")">
-                        <i class="fas fa-trophy"></i>
-                        <span>Ligler</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a asp-page="/Seasons/Index" class="sidebar-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.StartsWith("/Seasons") == true ? "active" : "")">
-                        <i class="fas fa-calendar"></i>
-                        <span>Sezonlar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a asp-page="/Teams/Index" class="sidebar-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.StartsWith("/Teams") == true ? "active" : "")">
-                        <i class="fas fa-users"></i>
-                        <span>Takımlar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a asp-page="/Matches/Index" class="sidebar-link @(ViewContext.RouteData.Values["Page"]?.ToString()?.StartsWith("/Matches") == true ? "active" : "")">
-                        <i class="fas fa-gamepad"></i>
-                        <span>Maçlar</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- Main Content -->
-        <div class="main">
-            <!-- Top Navbar -->
-            <nav class="navbar navbar-expand navbar-light navbar-bg">
-                <a class="sidebar-toggle d-flex" id="sidebarToggleBtn">
-                    <i class="fas fa-bars"></i>
-                </a>
-
-                <div class="navbar-collapse collapse">
-                    <ul class="navbar-nav navbar-align">
-                        <li class="nav-item dropdown">
-                            <a class="nav-icon dropdown-toggle" href="#" id="profileDropdown" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle fa-lg"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-fw me-2"></i>Çıkış Yap
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <!-- Page Content -->
-            <main class="content">
-                <div class="container-fluid p-0">
-                    <div class="row mb-3">
-                        <div class="col-auto">
-                            <h1 class="h3 mb-0">@ViewData["Title"]</h1>
-                        </div>
+                <li class="breadcrumb-item active">Dashboard</li>
+                <!-- Breadcrumb Menu-->
+                <li class="breadcrumb-menu d-md-down-none">
+                    <div class="btn-group" role="group" aria-label="Button group">
+                        <a class="btn" href="#">
+                            <i class="icon-speech"></i>
+                        </a>
+                        <a class="btn" href="./">
+                            <i class="icon-graph"></i>  Dashboard
+                        </a>
+                        <a class="btn" href="#">
+                            <i class="icon-settings"></i>  Settings
+                        </a>
                     </div>
+                </li>
+            </ol>
 
-                    @RenderBody()
-                </div>
-            </main>
+            @RenderBody()
+        </main>
+        <!-- END MAIN CONTENT -->
+        <!-- ASIDE MENU -->
+        <partial name="_AsideMenu" />
+        <!-- END ASIDE MENU -->
 
-            <!-- Footer -->
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row text-muted">
-                        <div class="col-6 text-start">
-                            <p class="mb-0">
-                                <strong>FutScore</strong> &copy; @DateTime.Now.Year
-                            </p>
-                        </div>
-                        <div class="col-6 text-end">
-                            <ul class="list-inline">
-                                <li class="list-inline-item">
-                                    <span class="badge bg-primary">v1.0.0</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </div>
+
     </div>
 
-    <!-- Logout Modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="logoutModalLabel">Çıkış Yap</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Çıkış yapmak istediğinize emin misiniz?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <a href="/Identity/Account/Logout" class="btn btn-primary">Çıkış Yap</a>
-                </div>
-            </div>
+    <footer class="app-footer">
+        <div>
+            <a href="https://coreui.io">CoreUI</a>
+            <span>&copy; 2018 creativeLabs.</span>
         </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Yükleniyor...</span>
+        <div class="ml-auto">
+            <span>Powered by</span>
+            <a href="https://coreui.io">CoreUI</a>
         </div>
-    </div>
+    </footer>
 
-    <!-- Scripts -->
-    <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/moment/moment.min.js"></script>
-    <script src="~/lib/moment/locale/tr.js"></script>
-    <script src="~/lib/simplebar/simplebar.min.js"></script>
-    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="~/lib/datatables-bs5/dataTables.bootstrap5.min.js"></script>
-    <script src="~/lib/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="~/lib/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="~/lib/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="~/lib/jszip/jszip.min.js"></script>
-    <script src="~/lib/pdfmake/pdfmake.min.js"></script>
-    <script src="~/lib/pdfmake/vfs_fonts.js"></script>
-    <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <!-- CoreUI and necessary plugins-->
+        <script src="~/lib/pace-progress/js/pace.min.js"></script>
+
+        @*<script src="~/lib/perfect-scrollbar/dist/perfect-scrollbar.js"></script>*@
+        <script src="~/lib/coreui/dist/js/coreui.js"></script>
+        <!-- Plugins and scripts required by this view-->
+        @*<script src="~/lib/chart.js/dist/Chart.js"></script>
+            <script src="~/lib/coreui/js/custom-tooltips.js"></script>
+            <script src="~/lib/coreui/js/main.js"></script>*@
+
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- CoreUI and necessary plugins-->
+        <script src="~/lib/pace-progress/pace.min.js"></script>
+
+        <script src="~/lib/perfect-scrollbar/dist/perfect-scrollbar.min.js"></script>
+        <script src="~/lib/coreui/dist/js/coreui.min.js"></script>
+        <!-- Plugins and scripts required by this view-->
+        @*<script src="~/lib/chart.js/dist/Chart.min.js"></script>
+            <script src="~/lib/coreui/js/custom-tooltips.js"></script>
+            <script src="~/lib/coreui/js/main.js"></script>*@
+
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+
 </body>
 </html>

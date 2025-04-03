@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using FutScore.Infrastructure;
+using FutScore.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +70,12 @@ builder.Services.AddAuthentication(options =>
     options.ExpireTimeSpan = TimeSpan.FromHours(24);
     options.SlidingExpiration = true;
 });
+
+// Add Application Layer
+builder.Services.AddApplication();
+
+// Add Infrastructure Layer
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add Repositories
 builder.Services.AddScoped<ILeagueRepository, LeagueRepository>();
