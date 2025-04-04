@@ -7,10 +7,10 @@
 - [x] Maç tarihi validasyonu (geçmiş tarih kontrolü) eklenmeli
 
 ## 2. Kullanıcı Arayüzü İyileştirmeleri
-- [ ] Maç listesinde filtreleme özelliği eklenmeli
+- [x] Maç listesinde filtreleme özelliği eklenmeli
 - [ ] Maç detay sayfasında takım logoları gösterilmeli
-- [ ] Maç durumu için renk kodlaması eklenmeli (örn: Planlandı - Mavi, Canlı - Yeşil)
-- [ ] Responsive tasarım iyileştirmeleri yapılmalı
+- [x] Maç durumu için renk kodlaması eklenmeli (örn: Planlandı - Mavi, Canlı - Yeşil)
+- [x] Responsive tasarım iyileştirmeleri yapılmalı
 - [ ] Loading state'leri eklenmeli
 
 ## 3. Performans İyileştirmeleri
