@@ -61,6 +61,24 @@ namespace FutScore.Domain.Entities
 
         public Match(int seasonId, int homeTeamId, int awayTeamId, int stadiumId, DateTime matchDate)
         {
+            if (seasonId <= 0)
+                throw new ArgumentException("SeasonId must be greater than 0", nameof(seasonId));
+            
+            if (homeTeamId <= 0)
+                throw new ArgumentException("HomeTeamId must be greater than 0", nameof(homeTeamId));
+            
+            if (awayTeamId <= 0)
+                throw new ArgumentException("AwayTeamId must be greater than 0", nameof(awayTeamId));
+            
+            if (stadiumId <= 0)
+                throw new ArgumentException("StadiumId must be greater than 0", nameof(stadiumId));
+            
+            if (homeTeamId == awayTeamId)
+                throw new ArgumentException("Home team and away team cannot be the same", nameof(awayTeamId));
+            
+            if (matchDate < DateTime.UtcNow)
+                throw new ArgumentException("Match date cannot be in the past", nameof(matchDate));
+
             SeasonId = seasonId;
             HomeTeamId = homeTeamId;
             AwayTeamId = awayTeamId;
@@ -95,6 +113,21 @@ namespace FutScore.Domain.Entities
 
             Status = MatchStatus.Completed;
             MatchTime = new MatchTime(MatchTime.MatchDate, MatchTime.StartTime, DateTime.UtcNow);
+        }
+
+        public void UpdateStatus(MatchStatus newStatus)
+        {
+            if (Status == MatchStatus.Completed && newStatus != MatchStatus.Completed)
+            {
+                throw new InvalidOperationException("Completed match status cannot be changed");
+            }
+
+            if (Status == MatchStatus.Cancelled && newStatus != MatchStatus.Cancelled)
+            {
+                throw new InvalidOperationException("Cancelled match status cannot be changed");
+            }
+
+            Status = newStatus;
         }
 
         public void ClearDomainEvents()

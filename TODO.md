@@ -1,80 +1,64 @@
 # FutScore Projesi TODO Listesi
 
-## 1. Mimari Düzenlemeler
-- [ ] Infrastructure ve Domain.Data klasörlerini ilgili katmanlara taşı
-- [ ] Clean Architecture prensiplerine göre katmanları düzenle
-- [ ] Dependency injection container'ı optimize et
+## 1. Veri Doğrulama ve Validasyon
+- [x] Match entity'sinde StadiumId alanı için validasyon eklenmeli
+- [x] CreateMatchDto ve UpdateMatchDto'da tüm alanlar için validasyon kuralları eklenmeli
+- [x] Takım seçimlerinde aynı takımın hem ev sahibi hem deplasman olarak seçilmesi engellenmeli
+- [x] Maç tarihi validasyonu (geçmiş tarih kontrolü) eklenmeli
 
-## 2. API Katmanı İyileştirmeleri
-- [ ] Swagger/OpenAPI dokümantasyonu ekle
-- [ ] Global exception handling middleware'i ekle
-- [ ] Request/Response logging mekanizması ekle
-- [ ] API endpoint'lerini RESTful standartlarına uygun hale getir
+## 2. Kullanıcı Arayüzü İyileştirmeleri
+- [ ] Maç listesinde filtreleme özelliği eklenmeli
+- [ ] Maç detay sayfasında takım logoları gösterilmeli
+- [ ] Maç durumu için renk kodlaması eklenmeli (örn: Planlandı - Mavi, Canlı - Yeşil)
+- [ ] Responsive tasarım iyileştirmeleri yapılmalı
+- [ ] Loading state'leri eklenmeli
 
-## 3. Güvenlik İyileştirmeleri
-- [ ] JWT token yapılandırması ve implementasyonu
-- [ ] Role-based authorization yapısı kur
-- [ ] CORS politikalarını yapılandır
-- [ ] FluentValidation ile input validation ekle
+## 3. Performans İyileştirmeleri
+- [ ] Maç listesi için sayfalama (pagination) eklenmeli
+- [ ] Gereksiz veri çekme işlemleri optimize edilmeli
+- [ ] Cache mekanizması eklenmeli
+- [ ] Lazy loading implementasyonu yapılmalı
 
-## 4. Veritabanı İyileştirmeleri
-- [ ] Migration stratejisi oluştur
-- [ ] Repository pattern implementasyonu
-- [ ] Connection string yönetimi için configuration
-- [ ] Database index optimizasyonları
+## 4. Güvenlik
+- [ ] Kullanıcı yetkilendirme sistemi geliştirilmeli
+- [ ] API endpoint'leri için rate limiting eklenmeli
+- [ ] XSS ve CSRF koruması güçlendirilmeli
+- [ ] Input sanitization eklenmeli
 
-## 5. Domain Katmanı İyileştirmeleri
-- [ ] Domain model validasyonları ekle
-- [ ] Business rule'ları domain katmanına taşı
-- [ ] Entity'leri ve ilişkileri gözden geçir
+## 5. Test
+- [ ] Unit testler yazılmalı
+- [ ] Integration testler eklenmeli
+- [ ] UI testleri eklenmeli
+- [ ] Performance testleri yapılmalı
 
-## 6. Application Katmanı İyileştirmeleri
-- [ ] AutoMapper profillerini oluştur
-- [ ] Validation pipeline'ları ekle
-- [ ] Application service'leri oluştur
+## 6. Kod Kalitesi
+- [ ] AutoMapper profilleri düzenlenmeli
+- [ ] Repository pattern implementasyonu iyileştirilmeli
+- [ ] Exception handling merkezi hale getirilmeli
+- [ ] Loglama sistemi geliştirilmeli
+- [ ] Kod tekrarları azaltılmalı
 
-## 7. Infrastructure Katmanı İyileştirmeleri
-- [ ] Email service implementasyonu
-- [ ] File storage service implementasyonu
-- [ ] Third-party servis entegrasyonları
+## 7. Özellik Eksiklikleri
+- [ ] Maç istatistikleri eklenmeli
+- [ ] Oyuncu performans değerlendirmeleri eklenmeli
+- [ ] Maç yorumları/notları eklenmeli
+- [ ] Maç bildirimleri sistemi eklenmeli
+- [ ] Maç sonuçları için otomatik bildirim sistemi
 
-## 8. Test Altyapısı
-- [ ] Unit test projesi oluştur
-- [ ] Integration test projesi oluştur
-- [ ] Test coverage raporlama sistemi kur
+## 8. Deployment ve DevOps
+- [ ] CI/CD pipeline'ı kurulmalı
+- [ ] Docker container'ları hazırlanmalı
+- [ ] Monitoring ve alerting sistemi kurulmalı
+- [ ] Backup ve recovery planı oluşturulmalı
 
-## 9. CI/CD Pipeline
-- [ ] GitHub Actions workflow'ları oluştur
-- [ ] Deployment pipeline'ları kur
-- [ ] Environment configuration yönetimi
+## 9. Dokümantasyon
+- [ ] API dokümantasyonu oluşturulmalı
+- [ ] Kod dokümantasyonu geliştirilmeli
+- [ ] Kullanıcı kılavuzu hazırlanmalı
+- [ ] Deployment dokümantasyonu eklenmeli
 
-## 10. Monitoring ve Logging
-- [ ] Serilog entegrasyonu
-- [ ] Health check endpoint'leri ekle
-- [ ] Error tracking entegrasyonu
-
-## 11. Frontend İyileştirmeleri
-- [ ] Form validation sistemi
-- [ ] Error boundary implementasyonu
-- [ ] Loading state yönetimi
-- [ ] Responsive design iyileştirmeleri
-
-## 12. Dokümantasyon
-- [ ] API dokümantasyonu oluştur
-- [ ] Deployment guide hazırla
-- [ ] Development setup guide oluştur
-
-## Öncelik Sırası
-1. Mimari düzenlemeler ve temel yapı
-2. Güvenlik iyileştirmeleri
-3. Veritabanı optimizasyonları
-4. API katmanı iyileştirmeleri
-5. Test altyapısı
-6. Frontend iyileştirmeleri
-7. Dokümantasyon
-
-## Notlar
-- Her task için estimated time belirtilecek
-- Task'lar sprint'lere bölünecek
-- Her sprint sonunda code review yapılacak
-- Test coverage hedefleri belirlenecek 
+## 10. Paket Yönetimi
+- [ ] AutoMapper paket versiyonları güncellenmeli
+- [ ] Diğer paketlerin versiyonları kontrol edilmeli
+- [ ] Gereksiz paketler kaldırılmalı
+- [ ] Paket bağımlılıkları optimize edilmeli

@@ -50,7 +50,7 @@ namespace FutScore.Dashboard.Pages.Matches
                 HomeTeamId = match.HomeTeamId,
                 AwayTeamId = match.AwayTeamId,
                 MatchDate = match.MatchDate,
-                Stadium = match.Stadium.Name,
+                Stadium = match.Stadium,
                 HomeTeamScore = match.HomeTeamScore,
                 AwayTeamScore = match.AwayTeamScore,
                 Status = match.Status
