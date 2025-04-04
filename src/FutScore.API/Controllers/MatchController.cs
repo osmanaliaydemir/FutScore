@@ -38,7 +38,7 @@ namespace FutScore.API.Controllers
 
         // POST: api/match
         [HttpPost]
-        public async Task<IActionResult> AddMatch([FromBody] MatchDto matchDto)
+        public async Task<IActionResult> AddMatch([FromBody] CreateMatchDto matchDto)
         {
             if (matchDto == null)
             {
@@ -56,7 +56,7 @@ namespace FutScore.API.Controllers
 
         // PUT: api/match/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMatch(int id, [FromBody] MatchDto matchDto)
+        public async Task<IActionResult> UpdateMatch(int id, [FromBody] UpdateMatchDto matchDto)
         {
             if (id != matchDto.Id)
             {

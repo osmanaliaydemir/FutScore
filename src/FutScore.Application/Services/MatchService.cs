@@ -21,27 +21,27 @@ namespace FutScore.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ProcessResult> AddMatchAsync(MatchDto matchDto)
+        public async Task<ProcessResult> AddMatchAsync(CreateMatchDto matchDto)
         {
             var match = _mapper.Map<Match>(matchDto);
             var result = await _matchRepository.AddAsync(match);
             return result;
         }
 
-        public async Task<ProcessResult> UpdateMatchAsync(MatchDto matchDto)
+        public async Task<ProcessResult> UpdateMatchAsync(UpdateMatchDto matchDto)
         {
-            var existingMatch = await _matchRepository.GetByIdAsync(matchDto.Id);
-            if (existingMatch == null)
+            var match = await _matchRepository.GetByIdAsync(matchDto.Id);
+            if (match == null)
             {
                 return new ProcessResult
                 {
                     Success = false,
-                    Message = "Maç bulunamadý."
+                    Message = "MaÃ§ bulunamadÄ±."
                 };
             }
 
-            _mapper.Map(matchDto, existingMatch);
-            return await _matchRepository.UpdateAsync(existingMatch);
+            _mapper.Map(matchDto, match);
+            return await _matchRepository.UpdateAsync(match);
         }
 
         public async Task<ProcessResult> DeleteMatchAsync(int id)
@@ -52,7 +52,7 @@ namespace FutScore.Application.Services
                 return new ProcessResult
                 {
                     Success = false,
-                    Message = "Maç bulunamadý."
+                    Message = "MaÃ§ bulunamadÄ±."
                 };
             }
 
@@ -61,7 +61,7 @@ namespace FutScore.Application.Services
 
         public async Task<IEnumerable<MatchDto>> GetAllMatchesAsync()
         {
-            var matches = await _matchRepository.GetAllAsync();
+            var matches = await _matchRepository.GetAllWithRelationsAsync();
             return _mapper.Map<IEnumerable<MatchDto>>(matches);
         }
 

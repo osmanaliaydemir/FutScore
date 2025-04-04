@@ -8,8 +8,8 @@ namespace FutScore.Application.Interfaces
 {
     public interface IMatchService
     {
-        Task<ProcessResult> AddMatchAsync(MatchDto matchDto);
-        Task<ProcessResult> UpdateMatchAsync(MatchDto matchDto);
+        Task<ProcessResult> AddMatchAsync(CreateMatchDto matchDto);
+        Task<ProcessResult> UpdateMatchAsync(UpdateMatchDto matchDto);
         Task<ProcessResult> DeleteMatchAsync(int id);
         Task<IEnumerable<MatchDto>> GetAllMatchesAsync();
         Task<MatchDto> GetMatchByIdAsync(int id);

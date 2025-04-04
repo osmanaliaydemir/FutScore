@@ -1,0 +1,99 @@
+@page "{id:int}"
+@model FutScore.Dashboard.Pages.Matches.EditModel
+@{
+    ViewData["Title"] = "Maç Düzenle";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Index">Maçlar</a></li>
+        <li class="breadcrumb-item active">Maç Düzenle</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-edit me-1"></i>
+            Maç Düzenle
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Match.Id" />
+                
+                <div class="form-group mb-3">
+                    <label asp-for="Match.SeasonId" class="control-label">Sezon</label>
+                    <select asp-for="Match.SeasonId" class="form-control" asp-items="Model.Seasons">
+                        <option value="">Sezon Seçiniz</option>
+                    </select>
+                    <span asp-validation-for="Match.SeasonId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Match.HomeTeamId" class="control-label">Ev Sahibi Takım</label>
+                    <select asp-for="Match.HomeTeamId" class="form-control" asp-items="Model.Teams">
+                        <option value="">Takım Seçiniz</option>
+                    </select>
+                    <span asp-validation-for="Match.HomeTeamId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Match.AwayTeamId" class="control-label">Deplasman Takımı</label>
+                    <select asp-for="Match.AwayTeamId" class="form-control" asp-items="Model.Teams">
+                        <option value="">Takım Seçiniz</option>
+                    </select>
+                    <span asp-validation-for="Match.AwayTeamId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Match.MatchDate" class="control-label">Maç Tarihi</label>
+                    <input asp-for="Match.MatchDate" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="Match.MatchDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Match.Stadium" class="control-label">Stadyum</label>
+                    <input asp-for="Match.Stadium" class="form-control" />
+                    <span asp-validation-for="Match.Stadium" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Match.HomeTeamScore" class="control-label">Ev Sahibi Skor</label>
+                    <input asp-for="Match.HomeTeamScore" class="form-control" type="number" min="0" />
+                    <span asp-validation-for="Match.HomeTeamScore" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Match.AwayTeamScore" class="control-label">Deplasman Skor</label>
+                    <input asp-for="Match.AwayTeamScore" class="form-control" type="number" min="0" />
+                    <span asp-validation-for="Match.AwayTeamScore" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Match.Status" class="control-label">Durum</label>
+                    <select asp-for="Match.Status" class="form-control">
+                        <option value="Planlandı">Planlandı</option>
+                        <option value="Oynandı">Oynandı</option>
+                        <option value="İptal Edildi">İptal Edildi</option>
+                        <option value="Ertelendi">Ertelendi</option>
+                    </select>
+                    <span asp-validation-for="Match.Status" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <a asp-page="./Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Listeye Dön
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
